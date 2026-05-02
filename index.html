@@ -461,32 +461,67 @@ var verCache = {};
   loadData();
 })();
 
+/* ── JSONP 工具（完全繞過 iOS Safari CORS 限制）── */
+function gasCall(url, onSuccess, onError, timeout) {
+  var cb = '_gas_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+  var el = document.createElement('script');
+  var done = false;
+  var timer = setTimeout(function() {
+    if (done) return;
+    done = true;
+    cleanup();
+    (onError || function(){})({ message: '請求逾時，請確認 GAS 已重新部署' });
+  }, timeout || 15000);
+  window[cb] = function(data) {
+    if (done) return;
+    done = true;
+    cleanup();
+    (onSuccess || function(){})(data);
+  };
+  function cleanup() {
+    clearTimeout(timer);
+    delete window[cb];
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }
+  el.onerror = function() {
+    if (done) return;
+    done = true;
+    cleanup();
+    (onError || function(){})({ message: 'Script 載入失敗，請確認 GAS URL 正確' });
+  };
+  var sep = url.indexOf('?') >= 0 ? '&' : '?';
+  el.src = url + sep + 'callback=' + cb;
+  document.head.appendChild(el);
+}
+
 function loadData() {
   ovShow('🔍 載入 SEO 健檢資料', '連接到 GAS 後端，讀取 Sheets 資料…');
-  fetch(window.GAS_ENDPOINT + '?format=json')
-    .then(function(r) { return r.json(); })
-    .then(onData)
-    .catch(function(e) { onErr({ message: e.message }); });
+  gasCall(
+    window.GAS_ENDPOINT + '?format=json',
+    onData,
+    onErr,
+    20000
+  );
 }
 
 function startScan() {
   var btn = document.getElementById('scanBtn');
-  btn.disabled = true; btn.textContent = '⏳ 請稍候…';
-  ovShow('🔄 觸發全站掃描', '已送出掃描請求，GAS 正在處理（約 2–3 分鐘）…');
-  fetch(window.GAS_ENDPOINT + '?action=scan')
-    .then(function(r) { return r.json(); })
-    .then(function() {
-      setTimeout(function() {
-        fetch(window.GAS_ENDPOINT + '?format=json')
-          .then(function(r) { return r.json(); })
-          .then(function(d) { onData(d); toast('✅ 掃描完成！'); });
-      }, 5000);
-    })
-    .catch(function(e) {
+  btn.disabled = true; btn.textContent = '⏳ 掃描中…';
+  ovShow('🔄 全站掃描中', '正在掃描 75 個頁面，約需 2–3 分鐘，請耐心等候…');
+  gasCall(
+    window.GAS_ENDPOINT + '?action=scan',
+    function(res) {
+      var d = (res && res.data) ? res.data : res;
+      onData(d);
+      toast('✅ 掃描完成！所有指標已更新');
+    },
+    function(e) {
       ovHide();
       btn.disabled = false; btn.textContent = '🔄 立即掃描';
-      toast('❌ 掃描觸發失敗：' + e.message);
-    });
+      toast('❌ 掃描失敗：' + e.message);
+    },
+    210000   // 掃描最多等 3.5 分鐘
+  );
 }
 
 function onData(d) {
@@ -629,7 +664,7 @@ function toggleChk(id) {
   if (chk)  chk.classList.toggle('on',   !!checked[id]);
 }
 
-/* ── Click-to-Verify（GitHub Pages 版：呼叫 GAS JSON 端點）── */
+/* ── Click-to-Verify（JSONP 版，繞過 CORS）── */
 function verify(id, url, checkType) {
   if (!url || !checkType) { toast('⚠️ 此任務暫不支援即時驗證'); return; }
   var btn = event.currentTarget || event.target;
@@ -637,15 +672,15 @@ function verify(id, url, checkType) {
   btn.className = 'btn btn-verify';
   var vUrl = window.GAS_ENDPOINT + '?action=verify&url=' +
     encodeURIComponent(url) + '&check=' + encodeURIComponent(checkType);
-  fetch(vUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(r) {
+  gasCall(
+    vUrl,
+    function(r) {
       verCache[id] = r;
       btn.disabled = false;
       btn.textContent = r.pass ? '✅ 已修復' : '❌ 再驗';
       btn.className = 'btn btn-verify ' + (r.pass ? 'v-pass' : 'v-fail');
       toast((r.pass ? '✅ ' : '❌ ') + r.message);
-      var foot = btn.closest('.t-foot');
+      var foot = btn.closest ? btn.closest('.t-foot') : null;
       if (foot) {
         var old = foot.querySelector('.v-result');
         if (old) old.remove();
@@ -654,12 +689,14 @@ function verify(id, url, checkType) {
         div.textContent = (r.pass ? '✅ ' : '❌ ') + r.message;
         foot.querySelector('.t-actions').prepend(div);
       }
-    })
-    .catch(function(e) {
+    },
+    function(e) {
       btn.disabled = false; btn.textContent = '🔍 驗證';
       btn.className = 'btn btn-verify';
       toast('❌ 驗證失敗：' + e.message);
-    });
+    },
+    30000
+  );
 }
 
 /* ── Pages ── */
