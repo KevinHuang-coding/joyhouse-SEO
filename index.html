@@ -448,7 +448,7 @@ var verCache = {};
 
 /* ── Boot ── */
 (function init() {
-  if (!window.GAS_ENDPOINT || window.GAS_ENDPOINT === 'https://script.google.com/macros/s/AKfycbwPBWpJA8601aSKMj9k9GRxW1zPpgD1Q1gBnaMQHpimTgXDmjjxf76ReuWMh5dRWKvh/exec') {
+  if (!window.GAS_ENDPOINT || window.GAS_ENDPOINT === 'YOUR_GAS_WEB_APP_URL') {
     document.getElementById('cfgNotice').classList.add('show');
     ovHide();
     document.getElementById('hero-grade').textContent = '請先設定 GAS 端點';
