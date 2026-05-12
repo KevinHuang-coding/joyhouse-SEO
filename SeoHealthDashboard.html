@@ -107,6 +107,14 @@ body {
 .hdr-sub   { font-size: 11px; color: var(--text3); }
 .hdr-right { display: flex; align-items: center; gap: 10px; }
 #hdr-scan-time { font-size: 11px; color: var(--text3); }
+.btn-guide {
+  padding: 7px 14px; font-size: 12px; font-weight: 700;
+  background: rgba(236,72,153,.12); color: #f472b6;
+  border: 1px solid rgba(236,72,153,.3); border-radius: 8px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+  transition: all .18s; white-space: nowrap;
+}
+.btn-guide:hover { background: rgba(236,72,153,.25); border-color: #ec4899; }
 
 /* ═══════════════════════════════════════════════
    BUTTONS
@@ -297,6 +305,77 @@ body {
 .snip-msg { font-size: 11px; color: var(--text2); }
 
 /* ═══════════════════════════════════════════════
+   [v3.0 NEW] GSC 關鍵字情報面板
+═══════════════════════════════════════════════ */
+.gsc-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.gsc-opp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.gsc-opp-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.gsc-opp-icon  { font-size: 20px; margin-bottom: 4px; }
+.gsc-opp-num   { font-size: 26px; font-weight: 900; line-height: 1; }
+.gsc-opp-label { font-size: 10px; color: var(--text2); margin-top: 3px; }
+.gsc-summary   { display:flex; gap:16px; font-size:11px; color:var(--text2); margin-bottom:12px; flex-wrap:wrap; }
+.gsc-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.gsc-tab {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--card2); color: var(--text2); transition: all .18s;
+}
+.gsc-tab.active {
+  background: rgba(124,92,252,.15);
+  border-color: var(--accent);
+  color: var(--accent3);
+}
+.gsc-hint {
+  font-size: 11px; color: var(--text2);
+  margin-bottom: 10px; padding: 8px 10px;
+  background: rgba(255,255,255,.03); border-radius: 8px;
+}
+.gsc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.gsc-table th {
+  padding: 8px 10px; text-align: left;
+  font-size: 10px; color: var(--text3); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--border);
+}
+.gsc-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+  color: var(--text);
+}
+.gsc-table tr:last-child td { border-bottom: none; }
+.gsc-table tr:hover td { background: rgba(255,255,255,.02); }
+.gsc-kw { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pos-badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.pos-top3  { background: rgba(34,197,94,.15);  color: var(--green2);  }
+.pos-4-10  { background: rgba(124,92,252,.15); color: var(--accent3); }
+.pos-11-20 { background: rgba(245,158,11,.15); color: var(--yellow2); }
+.pos-other { background: rgba(255,255,255,.05);color: var(--text3);   }
+@media (max-width: 560px) {
+  .gsc-opp-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════════════
    PHASE TABS
 ═══════════════════════════════════════════════ */
 .phase-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -478,6 +557,7 @@ body {
     </div>
   </div>
   <div class="hdr-right">
+    <a class="btn-guide" href="article-writing-guide.html">✍️ 文章撰寫建議</a>
     <span id="hdr-scan-time"></span>
     <button class="btn btn-scan" id="scanBtn" onclick="startScan()">
       🔄 立即掃描
@@ -537,6 +617,17 @@ body {
   <div class="sec-hd" style="margin-top:18px">🔧 Code Snippets 健康度</div>
   <div class="snippet-card" id="snippetCard">
     <div class="empty"><div class="e-icon">⏳</div><p>載入中</p></div>
+  </div>
+
+  <!-- 2.7 [v3.0 NEW] GSC 關鍵字情報面板 -->
+  <div class="sec-hd" style="margin-top:18px">
+    📊 GSC 關鍵字情報（近 90 天）
+    <button class="btn" id="gscRefreshBtn"
+      style="padding:4px 10px;font-size:11px;background:rgba(59,130,246,.12);color:var(--blue2);border:1px solid rgba(59,130,246,.3);margin-left:8px;"
+      onclick="refreshGSC()">🔄 重新抓取</button>
+  </div>
+  <div class="gsc-card" id="gscCard">
+    <div class="empty"><div class="e-icon">⏳</div><p>載入 GSC 數據中…</p></div>
   </div>
 
   <!-- 3. Phase Task List -->
@@ -603,7 +694,10 @@ var checked  = JSON.parse(localStorage.getItem('seo_chk') || '{}');
 var verResults = {};   // taskId → {pass, message}
 
 /* ── Boot ── */
-document.addEventListener('DOMContentLoaded', loadData);
+document.addEventListener('DOMContentLoaded', function() {
+  loadData();
+  loadGSCData();
+});
 
 function loadData() {
   ovShow('🔍 載入 SEO 健檢資料', '正在讀取 Google Sheets 最新數據…');
@@ -979,6 +1073,120 @@ function detCell(lbl, val) {
 function togglePg(id) {
   var el = document.getElementById(id);
   if (el) el.classList.toggle('open');
+}
+
+/* ── [v3.0 NEW] GSC 關鍵字情報 ── */
+var GSC = null;
+var curGscTab = 'attack';
+
+function loadGSCData() {
+  google.script.run
+    .withSuccessHandler(function(d) { GSC = d; renderGSCPanel(d); })
+    .withFailureHandler(function(e) {
+      setHtml('gscCard',
+        '<div style="padding:12px;color:var(--text2);font-size:12px">' +
+        '⚠️ GSC 資料載入失敗：' + esc(e.message || '未知錯誤') +
+        '<br>請先在 GAS 執行 fetchGSCData()。</div>');
+    })
+    .getGSCEngineData();
+}
+
+function refreshGSC() {
+  var btn = document.getElementById('gscRefreshBtn');
+  btn.disabled = true; btn.textContent = '⏳ 抓取中…';
+  setHtml('gscCard', empty('⏳', '正在重新抓取 GSC 數據，約需 30 秒…'));
+  google.script.run
+    .withSuccessHandler(function(msg) {
+      toast('✅ ' + msg);
+      btn.disabled = false; btn.textContent = '🔄 重新抓取';
+      loadGSCData();
+    })
+    .withFailureHandler(function(e) {
+      btn.disabled = false; btn.textContent = '🔄 重新抓取';
+      toast('❌ 抓取失敗：' + e.message);
+    })
+    .fetchGSCData();
+}
+
+function renderGSCPanel(d) {
+  if (!d || !d.totalKeywords) {
+    setHtml('gscCard', empty('📊', '尚無 GSC 數據，請點「重新抓取」'));
+    return;
+  }
+  var opp = d.opportunity || {};
+  var oppGrid =
+    '<div class="gsc-opp-grid">' +
+    _gscOppItem('🚀', opp.attack    || 0, '攻擊型',  '#7c5cfc') +
+    _gscOppItem('💡', opp.ctr       || 0, 'CTR優化', '#f59e0b') +
+    _gscOppItem('🛡️', opp.defend   || 0, '防守型',  '#22c55e') +
+    _gscOppItem('⬆️', opp.potential || 0, '潛力型',  '#3b82f6') +
+    '</div>';
+  var summary =
+    '<div class="gsc-summary">' +
+    '<span>📊 關鍵字：<strong style="color:var(--text)">' + d.totalKeywords + '</strong></span>' +
+    '<span>🌐 頁面：<strong style="color:var(--text)">' + d.totalPages + '</strong></span>' +
+    '<span>🕐 更新：<strong style="color:var(--text)">' + esc(d.lastUpdated || '—') + '</strong></span>' +
+    '</div>';
+  var tabs =
+    '<div class="gsc-tabs">' +
+    _gscTab('attack',  '🚀 攻擊型 (' + (d.topAttack  || []).length + ')') +
+    _gscTab('ctr',     '💡 CTR優化 (' + (d.topCTR    || []).length + ')') +
+    _gscTab('defend',  '🛡️ 防守型 (' + (d.topDefend || []).length + ')') +
+    '</div>' +
+    '<div id="gscTable"></div>';
+  setHtml('gscCard', oppGrid + summary + tabs);
+  switchGscTab('attack');
+}
+
+function _gscOppItem(icon, num, label, color) {
+  return '<div class="gsc-opp-item">' +
+    '<div class="gsc-opp-icon">' + icon + '</div>' +
+    '<div class="gsc-opp-num" style="color:' + color + '">' + num + '</div>' +
+    '<div class="gsc-opp-label">' + label + '</div>' +
+    '</div>';
+}
+function _gscTab(key, label) {
+  return '<div class="gsc-tab' + (curGscTab === key ? ' active' : '') +
+    '" onclick="switchGscTab(\'' + key + '\')">' + label + '</div>';
+}
+
+function switchGscTab(tab) {
+  curGscTab = tab;
+  document.querySelectorAll('.gsc-tab').forEach(function(el) {
+    var isActive = (tab === 'attack' && el.textContent.indexOf('🚀') > -1) ||
+                   (tab === 'ctr'    && el.textContent.indexOf('💡') > -1) ||
+                   (tab === 'defend' && el.textContent.indexOf('🛡') > -1);
+    el.classList.toggle('active', isActive);
+  });
+  if (!GSC) return;
+  var rows = tab === 'attack' ? (GSC.topAttack  || []) :
+             tab === 'ctr'    ? (GSC.topCTR     || []) :
+                                (GSC.topDefend   || []);
+  var hints = {
+    attack: '🎯 排名 4–10，曝光 ≥50——衝前三名，這裡的報酬最高',
+    ctr:    '💡 曝光多但 CTR <2%——優化 Title / Meta 文案即可見效，不需改排名',
+    defend: '🛡️ 目前排名 1–3，曝光高——需要持續守住，警惕競品搶佔'
+  };
+  var tbl = document.getElementById('gscTable');
+  if (!tbl) return;
+  if (!rows.length) { tbl.innerHTML = empty('🔍', '此分類暫無資料'); return; }
+  tbl.innerHTML =
+    '<div class="gsc-hint">' + hints[tab] + '</div>' +
+    '<table class="gsc-table"><thead><tr>' +
+    '<th>關鍵字</th><th>排名</th><th>曝光</th><th>點擊</th><th>CTR</th>' +
+    '</tr></thead><tbody>' +
+    rows.map(function(r) {
+      var pos = parseFloat(r['平均排名'] || 99);
+      var cls = pos <= 3 ? 'pos-top3' : pos <= 10 ? 'pos-4-10' : pos <= 20 ? 'pos-11-20' : 'pos-other';
+      return '<tr>' +
+        '<td class="gsc-kw">' + esc(r['關鍵字'] || '') + '</td>' +
+        '<td><span class="pos-badge ' + cls + '">' + pos + '</span></td>' +
+        '<td>' + (r['曝光數'] || 0) + '</td>' +
+        '<td>' + (r['點擊數'] || 0) + '</td>' +
+        '<td>' + (r['CTR(%)'] || '0') + '%</td>' +
+        '</tr>';
+    }).join('') +
+    '</tbody></table>';
 }
 
 /* ── Helpers ── */
