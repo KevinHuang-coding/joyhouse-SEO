@@ -536,6 +536,10 @@ body {
   .ph-tab { font-size: 10px; }
 }
 </style>
+  <script>
+    /* GitHub Pages 版本：以 fetch() 取代 google.script.run */
+    var GAS_URL = 'https://script.google.com/macros/s/AKfycbyj5z3SAnGwPfTvlJHRZL2weasH-nVLyxIXu3L7KnYXiR9NDYWxbJ-Sf-4j7Lh18IO5/exec';
+  </script>
 </head>
 <body>
 
@@ -701,10 +705,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadData() {
   ovShow('🔍 載入 SEO 健檢資料', '正在讀取 Google Sheets 最新數據…');
-  google.script.run
-    .withSuccessHandler(onData)
-    .withFailureHandler(onErr)
-    .getEngineData();
+  fetch(GAS_URL + '?format=json')
+    .then(function(r){ return r.json(); })
+    .then(onData)
+    .catch(function(e){ onErr({message: e.message}); });
 }
 
 function startScan() {
@@ -712,18 +716,18 @@ function startScan() {
   btn.disabled = true;
   btn.textContent = '⏳ 掃描中…';
   ovShow('🔄 全站掃描中', '逐頁掃描 75 個頁面，約需 2–3 分鐘，請耐心等候…');
-  google.script.run
-    .withSuccessHandler(function(d) {
+  fetch(GAS_URL + '?action=scan')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
       onData(d);
       toast('✅ 掃描完成！所有指標已更新');
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e){
       ovHide();
       btn.disabled = false;
       btn.textContent = '🔄 立即掃描';
       toast('❌ 掃描失敗：' + e.message);
-    })
-    .runScan();
+    });
 }
 
 /* ── Data handler ── */
@@ -971,8 +975,9 @@ function verify(id, url, checkType) {
   btn.textContent = '⏳';
   btn.className = 'btn btn-verify';
 
-  google.script.run
-    .withSuccessHandler(function(r) {
+  fetch(GAS_URL + '?action=verify&url=' + encodeURIComponent(url) + '&checkType=' + encodeURIComponent(checkType))
+    .then(function(res){ return res.json(); })
+    .then(function(r){
       verResults[id] = r;
       btn.disabled = false;
       btn.textContent = r.pass ? '✅ 已修復' : '❌ 再驗';
@@ -989,13 +994,12 @@ function verify(id, url, checkType) {
         foot.querySelector('.t-actions').prepend(div);
       }
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e){
       btn.disabled = false;
       btn.textContent = '🔍 驗證';
       btn.className = 'btn btn-verify';
       toast('❌ 驗證錯誤：' + e.message);
-    })
-    .verifyTask(url, checkType);
+    });
 }
 
 /* ── Pages ── */
@@ -1080,32 +1084,32 @@ var GSC = null;
 var curGscTab = 'attack';
 
 function loadGSCData() {
-  google.script.run
-    .withSuccessHandler(function(d) { GSC = d; renderGSCPanel(d); })
-    .withFailureHandler(function(e) {
+  fetch(GAS_URL + '?format=gsc')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ GSC = d; renderGSCPanel(d); })
+    .catch(function(e){
       setHtml('gscCard',
         '<div style="padding:12px;color:var(--text2);font-size:12px">' +
         '⚠️ GSC 資料載入失敗：' + esc(e.message || '未知錯誤') +
         '<br>請先在 GAS 執行 fetchGSCData()。</div>');
-    })
-    .getGSCEngineData();
+    });
 }
 
 function refreshGSC() {
   var btn = document.getElementById('gscRefreshBtn');
   btn.disabled = true; btn.textContent = '⏳ 抓取中…';
   setHtml('gscCard', empty('⏳', '正在重新抓取 GSC 數據，約需 30 秒…'));
-  google.script.run
-    .withSuccessHandler(function(msg) {
-      toast('✅ ' + msg);
+  fetch(GAS_URL + '?action=fetch_gsc')
+    .then(function(r){ return r.json(); })
+    .then(function(msg){
+      toast('✅ ' + (typeof msg === 'string' ? msg : 'GSC 數據已更新'));
       btn.disabled = false; btn.textContent = '🔄 重新抓取';
       loadGSCData();
     })
-    .withFailureHandler(function(e) {
+    .catch(function(e){
       btn.disabled = false; btn.textContent = '🔄 重新抓取';
       toast('❌ 抓取失敗：' + e.message);
-    })
-    .fetchGSCData();
+    });
 }
 
 function renderGSCPanel(d) {
