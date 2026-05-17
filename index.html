@@ -818,66 +818,6 @@ body {
   <div class="gsc-card" id="gscCard">
     <div class="empty"><div class="e-icon">⏳</div><p>載入 GSC 數據中…</p></div>
   </div>
-
-  <!-- 2.8 [v4.0 NEW] GA4 流量分析面板 -->
-  <div class="sec-hd" style="margin-top:18px">
-    📈 GA4 流量分析（近 90 天）
-    <button class="btn" id="ga4RefreshBtn"
-      style="padding:4px 10px;font-size:11px;background:rgba(66,133,244,.12);color:#93c5fd;border:1px solid rgba(66,133,244,.3);margin-left:8px;"
-      onclick="refreshGA4()">🔄 重新抓取</button>
-  </div>
-  <div class="ga4-card" id="ga4Card">
-    <div class="empty"><div class="e-icon">⏳</div><p>載入 GA4 數據中…</p></div>
-  </div>
-
-  <!-- 3. Phase Task List -->
-  <div class="sec-hd" style="margin-top:18px">🎯 優化任務清單</div>
-
-  <div class="phase-tabs" id="phaseTabs">
-    <div class="ph-tab t1 active" data-ph="1" onclick="switchPhase(1)">
-      <span class="ph-n" id="pc1">—</span>
-      🔴 Phase 1<br><small>第1–2週・緊急</small>
-    </div>
-    <div class="ph-tab t2" data-ph="2" onclick="switchPhase(2)">
-      <span class="ph-n" id="pc2">—</span>
-      🟡 Phase 2<br><small>第3–4週・高優先</small>
-    </div>
-    <div class="ph-tab t3" data-ph="3" onclick="switchPhase(3)">
-      <span class="ph-n" id="pc3">—</span>
-      🔵 Phase 3<br><small>第5–6週・中優先</small>
-    </div>
-  </div>
-
-  <div class="task-list" id="taskList">
-    <div class="empty"><div class="e-icon">⏳</div><p>載入中</p></div>
-  </div>
-
-  <!-- 4. Page List -->
-  <div class="sec-hd" style="margin-top:20px">
-    📄 頁面清單（<span id="pgLabel">0</span>）
-  </div>
-  <div class="toolbar">
-    <input class="t-search" id="srch" placeholder="🔍 搜尋標題或網址…" oninput="filterPg()">
-    <select class="t-sel" id="stSel" onchange="filterPg()">
-      <option value="">全部狀態</option>
-      <option value="good">✅ 良好 ≥80</option>
-      <option value="warn">⚠️ 待優化 40–79</option>
-      <option value="bad">❌ 需改善 &lt;40</option>
-    </select>
-    <select class="t-sel" id="dimSel" onchange="filterPg()">
-      <option value="">全部維度</option>
-      <option value="schema">Schema 缺失</option>
-      <option value="h1">H1 缺失</option>
-      <option value="meta">Meta 過短</option>
-      <option value="image">圖片 Alt 不足</option>
-    </select>
-  </div>
-  <div class="pg-list" id="pgList">
-    <div class="empty"><div class="e-icon">⏳</div><p>載入中</p></div>
-  </div>
-
-</div><!-- /wrap -->
-
 <!-- ═══════════════════════════════════════════════
      TREND TRACKER SECTION (v4.0 NEW)
 ═══════════════════════════════════════════════ -->
@@ -959,6 +899,66 @@ body {
     </div>
     <div class="chart-note" id="siteChartNote"></div>
   </div>
+
+  <!-- 2.8 [v4.0 NEW] GA4 流量分析面板 -->
+  <div class="sec-hd" style="margin-top:18px">
+    📈 GA4 流量分析（近 90 天）
+    <button class="btn" id="ga4RefreshBtn"
+      style="padding:4px 10px;font-size:11px;background:rgba(66,133,244,.12);color:#93c5fd;border:1px solid rgba(66,133,244,.3);margin-left:8px;"
+      onclick="refreshGA4()">🔄 重新抓取</button>
+  </div>
+  <div class="ga4-card" id="ga4Card">
+    <div class="empty"><div class="e-icon">⏳</div><p>載入 GA4 數據中…</p></div>
+  </div>
+
+  <!-- 3. Phase Task List -->
+  <div class="sec-hd" style="margin-top:18px">🎯 優化任務清單</div>
+
+  <div class="phase-tabs" id="phaseTabs">
+    <div class="ph-tab t1 active" data-ph="1" onclick="switchPhase(1)">
+      <span class="ph-n" id="pc1">—</span>
+      🔴 Phase 1<br><small>第1–2週・緊急</small>
+    </div>
+    <div class="ph-tab t2" data-ph="2" onclick="switchPhase(2)">
+      <span class="ph-n" id="pc2">—</span>
+      🟡 Phase 2<br><small>第3–4週・高優先</small>
+    </div>
+    <div class="ph-tab t3" data-ph="3" onclick="switchPhase(3)">
+      <span class="ph-n" id="pc3">—</span>
+      🔵 Phase 3<br><small>第5–6週・中優先</small>
+    </div>
+  </div>
+
+  <div class="task-list" id="taskList">
+    <div class="empty"><div class="e-icon">⏳</div><p>載入中</p></div>
+  </div>
+
+  <!-- 4. Page List -->
+  <div class="sec-hd" style="margin-top:20px">
+    📄 頁面清單（<span id="pgLabel">0</span>）
+  </div>
+  <div class="toolbar">
+    <input class="t-search" id="srch" placeholder="🔍 搜尋標題或網址…" oninput="filterPg()">
+    <select class="t-sel" id="stSel" onchange="filterPg()">
+      <option value="">全部狀態</option>
+      <option value="good">✅ 良好 ≥80</option>
+      <option value="warn">⚠️ 待優化 40–79</option>
+      <option value="bad">❌ 需改善 &lt;40</option>
+    </select>
+    <select class="t-sel" id="dimSel" onchange="filterPg()">
+      <option value="">全部維度</option>
+      <option value="schema">Schema 缺失</option>
+      <option value="h1">H1 缺失</option>
+      <option value="meta">Meta 過短</option>
+      <option value="image">圖片 Alt 不足</option>
+    </select>
+  </div>
+  <div class="pg-list" id="pgList">
+    <div class="empty"><div class="e-icon">⏳</div><p>載入中</p></div>
+  </div>
+
+</div><!-- /wrap -->
+
 
 <!-- Toast -->
 <div id="toast" class="hide"></div>
@@ -1419,7 +1419,8 @@ function renderGSCPanel(d) {
     _gscTab('potential', '⬆️ 潛力型 ('  + (d.topPotential || []).length + ')') +
     '</div>' +
     '<div id="gscTable"></div>';
-  setHtml('gscCard', oppGrid + summary + tabs);
+  var note = '<div class="gsc-note" style="font-size:11px;color:var(--text3);padding:10px 12px;background:rgba(124,92,252,0.08);border-radius:6px;margin:10px 0;border-left:3px solid var(--accent2)">💡 「排名」為過去 90 天的<strong style="color:var(--text)">曝光加權平均</strong>；想看當前單日排名，請見下方「📈 趨勢監控」面板</div>';
+  setHtml('gscCard', oppGrid + summary + note + tabs);
   switchGscTab('attack');
 }
 
