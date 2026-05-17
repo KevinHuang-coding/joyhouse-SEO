@@ -1876,6 +1876,25 @@ function renderKwTagsUI() {
 }
 function escAttr(s) { return String(s).replace(/'/g, "\\'"); }
 
+/* ── 日期正規化：任意格式 → "YYYY-MM-DD"；X 軸 label 用 ── */
+function _normDate(v) {
+  if (!v) return '';
+  // JS Date object (Google Sheets 自動轉換)
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  var s = String(v);
+  // 如果是 ISO datetime / JS Date.toString()，只取前 10 字元
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  // "Fri Apr 03 2026 ..." 格式 → 用 Date parse
+  var d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return s.slice(0, 10);
+}
+
+/* ── 動態 maxTicksLimit：依目前選擇的天數區間 ── */
+function _ticksLimit() {
+  return trendDays <= 7 ? 7 : trendDays <= 30 ? 10 : 12;
+}
+
 /* ── 關鍵字排名折線圖 ── */
 function redrawKwChart() {
   var wrap = document.getElementById('kwChartWrap');
@@ -1892,13 +1911,13 @@ function redrawKwChart() {
 
   var metric = document.getElementById('kwMetricSel') ? document.getElementById('kwMetricSel').value : 'position';
 
-  // 收集所有日期（聯集後排序）
+  // 收集所有日期（聯集後排序），全部正規化為 YYYY-MM-DD
   var dateSet = {};
   selectedKws.forEach(function(kw) {
     var hist = TREND.history[kw] || [];
-    hist.forEach(function(pt){ dateSet[pt.date] = true; });
+    hist.forEach(function(pt){ dateSet[_normDate(pt.date)] = true; });
   });
-  var allDates = Object.keys(dateSet).sort();
+  var allDates = Object.keys(dateSet).filter(Boolean).sort();
 
   if (!allDates.length) {
     setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">📭</div><p>所選關鍵字尚無歷史資料<br><small>請先在 GAS 執行 backfillHistory()</small></p></div>');
@@ -1908,7 +1927,7 @@ function redrawKwChart() {
   var datasets = selectedKws.map(function(kw, i) {
     var hist = TREND.history[kw] || [];
     var histMap = {};
-    hist.forEach(function(pt){ histMap[pt.date] = pt; });
+    hist.forEach(function(pt){ histMap[_normDate(pt.date)] = pt; });
 
     var color = KW_COLORS[i % KW_COLORS.length];
     var values = allDates.map(function(d) {
@@ -1969,7 +1988,16 @@ function redrawKwChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 10 } },
+          ticks: {
+            color: '#64748b',
+            maxTicksLimit: _ticksLimit(),
+            font: { size: 10 },
+            callback: function(val) {
+              var label = this.getLabelForValue ? this.getLabelForValue(val) : String(val);
+              var d = _normDate(label);
+              return d ? d.slice(5) : label; // "MM-DD"
+            }
+          },
           grid:  { color: 'rgba(255,255,255,.04)' }
         },
         y: {
@@ -2003,7 +2031,7 @@ function redrawSiteChart() {
   };
   var meta    = metaMap[metric] || metaMap.clicks;
   var values  = SITE_TREND[metric] || [];
-  var dates   = SITE_TREND.dates   || [];
+  var dates   = (SITE_TREND.dates || []).map(_normDate).filter(Boolean);
 
   if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
   wrap.innerHTML = '<canvas id="siteChartCanvas"></canvas>';
@@ -2049,7 +2077,16 @@ function redrawSiteChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 10 } },
+          ticks: {
+            color: '#64748b',
+            maxTicksLimit: _ticksLimit(),
+            font: { size: 10 },
+            callback: function(val) {
+              var label = this.getLabelForValue ? this.getLabelForValue(val) : String(val);
+              var d = _normDate(label);
+              return d ? d.slice(5) : label; // "MM-DD"
+            }
+          },
           grid:  { color: 'rgba(255,255,255,.04)' }
         },
         y: {
