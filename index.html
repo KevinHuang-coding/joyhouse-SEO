@@ -376,6 +376,73 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
+   [v4.0 NEW] GA4 流量分析面板
+═══════════════════════════════════════════════ */
+.ga4-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.ga4-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.ga4-kpi {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.ga4-kpi-icon  { font-size: 18px; margin-bottom: 4px; }
+.ga4-kpi-num   { font-size: 22px; font-weight: 900; line-height: 1; }
+.ga4-kpi-label { font-size: 10px; color: var(--text2); margin-top: 3px; }
+.ga4-summary   { display:flex; gap:16px; font-size:11px; color:var(--text2); margin-bottom:12px; flex-wrap:wrap; }
+.ga4-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.ga4-tab {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--card2); color: var(--text2); transition: all .18s;
+}
+.ga4-tab.active {
+  background: rgba(66,133,244,.15);
+  border-color: #4285F4;
+  color: #93c5fd;
+}
+.ga4-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ga4-table th {
+  padding: 8px 10px; text-align: left;
+  font-size: 10px; color: var(--text3); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--border);
+}
+.ga4-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+  color: var(--text);
+}
+.ga4-table tr:last-child td { border-bottom: none; }
+.ga4-table tr:hover td { background: rgba(255,255,255,.02); }
+.ga4-ch-bar { display: flex; align-items: center; gap: 8px; }
+.ga4-bar-wrap { flex: 1; background: rgba(255,255,255,.05); border-radius: 3px; height: 6px; overflow: hidden; }
+.ga4-bar-fill { height: 100%; border-radius: 3px; }
+.eng-badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.eng-high { background: rgba(34,197,94,.15);  color: var(--green2);  }
+.eng-mid  { background: rgba(245,158,11,.15); color: var(--yellow2); }
+.eng-low  { background: rgba(239,68,68,.15);  color: var(--red2);    }
+@media (max-width: 560px) {
+  .ga4-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════════════
    PHASE TABS
 ═══════════════════════════════════════════════ */
 .phase-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -535,11 +602,129 @@ body {
   .phase-tabs { gap: 5px; }
   .ph-tab { font-size: 10px; }
 }
+
+/* ═══════════════════════════════════════════════
+   TREND TRACKER (v4.0)
+═══════════════════════════════════════════════ */
+/* ── 警示 Banner ── */
+.alert-banner {
+  border-radius: var(--radius); padding: 12px 16px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700;
+}
+.alert-banner.drop {
+  background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: var(--red2);
+}
+.alert-banner.rise {
+  background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3); color: var(--green2);
+}
+.alert-banner .ab-icon { font-size: 18px; flex-shrink: 0; }
+.alert-banner .ab-body { flex: 1; }
+.alert-banner .ab-title { font-weight: 800; margin-bottom: 3px; }
+.alert-banner .ab-kws   { font-size: 11px; opacity: .85; }
+
+/* ── 趨勢控制列 ── */
+.trend-controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  padding: 12px 14px; background: var(--card); border-radius: var(--radius);
+  border: 1px solid var(--border); margin-bottom: 14px;
+}
+.trend-label { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: .3px; }
+.trend-range-btn {
+  padding: 5px 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+  border: 1px solid var(--border2); background: transparent; color: var(--text2);
+  cursor: pointer; transition: all .15s;
+}
+.trend-range-btn.active, .trend-range-btn:hover {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.trend-metric-select {
+  padding: 5px 10px; border-radius: 7px; font-size: 12px;
+  background: var(--card2); color: var(--text); border: 1px solid var(--border2);
+  cursor: pointer;
+}
+.trend-sep { width: 1px; height: 20px; background: var(--border2); }
+
+/* ── 關鍵字搜尋 + 多選 ── */
+.kw-search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 340px; }
+.kw-search-input {
+  width: 100%; padding: 6px 10px; border-radius: 7px; font-size: 12px;
+  background: var(--card2); color: var(--text); border: 1px solid var(--border2);
+  outline: none;
+}
+.kw-search-input:focus { border-color: var(--accent); }
+.kw-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--card2); border: 1px solid var(--border2); border-radius: 9px;
+  max-height: 200px; overflow-y: auto; z-index: 200; display: none;
+  box-shadow: var(--shadow);
+}
+.kw-dropdown.open { display: block; }
+.kw-option {
+  padding: 7px 12px; font-size: 12px; cursor: pointer; display: flex;
+  align-items: center; gap: 8px; transition: background .12s;
+}
+.kw-option:hover { background: rgba(124,92,252,.12); }
+.kw-option.selected { color: var(--accent2); }
+.kw-option-check { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+  background: rgba(255,255,255,.05); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center; font-size: 9px; }
+.kw-option.selected .kw-option-check { background: var(--accent); border-color: var(--accent); }
+.kw-selected-tags {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
+}
+.kw-tag {
+  padding: 3px 8px 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  background: rgba(124,92,252,.15); color: var(--accent2);
+  border: 1px solid rgba(124,92,252,.25); display: flex; align-items: center; gap: 4px;
+}
+.kw-tag-rm { cursor: pointer; opacity: .7; font-size: 13px; line-height: 1; }
+.kw-tag-rm:hover { opacity: 1; }
+
+/* ── 圖表容器 ── */
+.chart-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 14px;
+}
+.chart-card-title {
+  font-size: 13px; font-weight: 700; color: var(--text2);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+}
+.chart-canvas-wrap { position: relative; height: 220px; }
+.chart-note { font-size: 10px; color: var(--text3); margin-top: 8px; text-align: right; }
+
+/* ── 警示列表（折疊） ── */
+.alert-list-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 14px;
+}
+.alert-list-hdr {
+  padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none;
+}
+.alert-list-hdr:hover { background: rgba(255,255,255,.03); }
+.alert-list-body { display: none; border-top: 1px solid var(--border); }
+.alert-list-body.open { display: block; }
+.alert-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+  font-size: 12px;
+}
+.alert-row:last-child { border-bottom: none; }
+.alert-kw { flex: 1; font-weight: 700; }
+.alert-pos { font-size: 11px; color: var(--text3); }
+.alert-badge {
+  padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 800;
+}
+.ab-drop { background: rgba(239,68,68,.15); color: var(--red2); }
+.ab-rise { background: rgba(34,197,94,.15); color: var(--green2); }
 </style>
   <script>
     /* GitHub Pages 版本：以 fetch() 取代 google.script.run */
     var GAS_URL = 'https://script.google.com/macros/s/AKfycbyj5z3SAnGwPfTvlJHRZL2weasH-nVLyxIXu3L7KnYXiR9NDYWxbJ-Sf-4j7Lh18IO5/exec';
   </script>
+  <!-- Chart.js for trend charts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -634,6 +819,17 @@ body {
     <div class="empty"><div class="e-icon">⏳</div><p>載入 GSC 數據中…</p></div>
   </div>
 
+  <!-- 2.8 [v4.0 NEW] GA4 流量分析面板 -->
+  <div class="sec-hd" style="margin-top:18px">
+    📈 GA4 流量分析（近 90 天）
+    <button class="btn" id="ga4RefreshBtn"
+      style="padding:4px 10px;font-size:11px;background:rgba(66,133,244,.12);color:#93c5fd;border:1px solid rgba(66,133,244,.3);margin-left:8px;"
+      onclick="refreshGA4()">🔄 重新抓取</button>
+  </div>
+  <div class="ga4-card" id="ga4Card">
+    <div class="empty"><div class="e-icon">⏳</div><p>載入 GA4 數據中…</p></div>
+  </div>
+
   <!-- 3. Phase Task List -->
   <div class="sec-hd" style="margin-top:18px">🎯 優化任務清單</div>
 
@@ -682,6 +878,88 @@ body {
 
 </div><!-- /wrap -->
 
+<!-- ═══════════════════════════════════════════════
+     TREND TRACKER SECTION (v4.0 NEW)
+═══════════════════════════════════════════════ -->
+
+  <!-- 標題列 + 重新整理 -->
+  <div class="sec-hd" style="margin-top:18px" id="trendSection">
+    📈 趨勢監控（關鍵字排名 K 線）
+    <button class="btn" id="trendRefreshBtn"
+      style="padding:4px 10px;font-size:11px;background:rgba(124,92,252,.12);color:var(--accent2);border:1px solid rgba(124,92,252,.3);margin-left:8px;"
+      onclick="refreshTrendData()">🔄 重新整理</button>
+    <span id="trendUpdatedAt" style="font-size:10px;color:var(--text3);margin-left:8px;"></span>
+  </div>
+
+  <!-- 警示 Banner 區（有警示才顯示）-->
+  <div id="alertBanners"></div>
+
+  <!-- 警示詳細清單（可折疊）-->
+  <div class="alert-list-card" id="alertListCard" style="display:none">
+    <div class="alert-list-hdr" onclick="toggleAlertList()">
+      <span id="alertListTitle" style="font-size:13px;font-weight:700">⚠️ 排名異動清單</span>
+      <span id="alertListChevron" style="color:var(--text3)">▶</span>
+    </div>
+    <div class="alert-list-body" id="alertListBody"></div>
+  </div>
+
+  <!-- 控制列：時間範圍 + 關鍵字選擇 + 指標切換 -->
+  <div class="trend-controls">
+    <span class="trend-label">時間範圍</span>
+    <button class="trend-range-btn" onclick="setTrendDays(7)"  id="tbtn7">7 天</button>
+    <button class="trend-range-btn active" onclick="setTrendDays(30)" id="tbtn30">30 天</button>
+    <button class="trend-range-btn" onclick="setTrendDays(90)" id="tbtn90">90 天</button>
+    <div class="trend-sep"></div>
+    <span class="trend-label">指標</span>
+    <select class="trend-metric-select" id="kwMetricSel" onchange="redrawKwChart()">
+      <option value="position">排名位置</option>
+      <option value="ctr">CTR (%)</option>
+      <option value="clicks">點擊數</option>
+      <option value="impressions">曝光數</option>
+    </select>
+    <div class="trend-sep"></div>
+    <!-- 關鍵字搜尋 + 多選 -->
+    <div style="flex:1;min-width:200px">
+      <div class="kw-search-wrap" id="kwSearchWrap">
+        <input class="kw-search-input" id="kwSearchInput" type="text"
+          placeholder="🔍 搜尋關鍵字（最多選 5 個）..."
+          oninput="filterKwDropdown()" onfocus="openKwDropdown()"
+          autocomplete="off" />
+        <div class="kw-dropdown" id="kwDropdown"></div>
+      </div>
+      <div class="kw-selected-tags" id="kwSelectedTags"></div>
+    </div>
+  </div>
+
+  <!-- 關鍵字排名折線圖 -->
+  <div class="chart-card">
+    <div class="chart-card-title">📊 關鍵字排名趨勢
+      <span style="font-size:10px;color:var(--text3);font-weight:400">（Y 軸反轉：數字越小 = 排名越高）</span>
+    </div>
+    <div class="chart-canvas-wrap" id="kwChartWrap">
+      <div class="empty"><div class="e-icon">⏳</div><p>載入趨勢資料中…</p></div>
+    </div>
+    <div class="chart-note" id="kwChartNote"></div>
+  </div>
+
+  <!-- 全站指標折線圖 -->
+  <div class="chart-card">
+    <div class="chart-card-title">🌐 全站 GSC 指標趨勢
+      <select class="trend-metric-select" id="siteMetricSel"
+        style="margin-left:auto"
+        onchange="redrawSiteChart()">
+        <option value="clicks">點擊數</option>
+        <option value="impressions">曝光數</option>
+        <option value="ctrs">CTR (%)</option>
+        <option value="avgPositions">平均排名</option>
+      </select>
+    </div>
+    <div class="chart-canvas-wrap" id="siteChartWrap">
+      <div class="empty"><div class="e-icon">⏳</div><p>載入全站指標中…</p></div>
+    </div>
+    <div class="chart-note" id="siteChartNote"></div>
+  </div>
+
 <!-- Toast -->
 <div id="toast" class="hide"></div>
 
@@ -701,6 +979,8 @@ var verResults = {};   // taskId → {pass, message}
 document.addEventListener('DOMContentLoaded', function() {
   loadData();
   loadGSCData();
+  loadGA4Data();    // v4.0 新增
+  loadTrendData();  // v4.0 TrendTracker
 });
 
 function loadData() {
@@ -1133,9 +1413,10 @@ function renderGSCPanel(d) {
     '</div>';
   var tabs =
     '<div class="gsc-tabs">' +
-    _gscTab('attack',  '🚀 攻擊型 (' + (d.topAttack  || []).length + ')') +
-    _gscTab('ctr',     '💡 CTR優化 (' + (d.topCTR    || []).length + ')') +
-    _gscTab('defend',  '🛡️ 防守型 (' + (d.topDefend || []).length + ')') +
+    _gscTab('attack',    '🚀 攻擊型 ('   + (d.topAttack    || []).length + ')') +
+    _gscTab('ctr',       '💡 CTR優化 ('  + (d.topCTR       || []).length + ')') +
+    _gscTab('defend',    '🛡️ 防守型 ('  + (d.topDefend    || []).length + ')') +
+    _gscTab('potential', '⬆️ 潛力型 ('  + (d.topPotential || []).length + ')') +
     '</div>' +
     '<div id="gscTable"></div>';
   setHtml('gscCard', oppGrid + summary + tabs);
@@ -1157,19 +1438,22 @@ function _gscTab(key, label) {
 function switchGscTab(tab) {
   curGscTab = tab;
   document.querySelectorAll('.gsc-tab').forEach(function(el) {
-    var isActive = (tab === 'attack' && el.textContent.indexOf('🚀') > -1) ||
-                   (tab === 'ctr'    && el.textContent.indexOf('💡') > -1) ||
-                   (tab === 'defend' && el.textContent.indexOf('🛡') > -1);
+    var isActive = (tab === 'attack'    && el.textContent.indexOf('🚀') > -1) ||
+                   (tab === 'ctr'       && el.textContent.indexOf('💡') > -1) ||
+                   (tab === 'defend'    && el.textContent.indexOf('🛡') > -1) ||
+                   (tab === 'potential' && el.textContent.indexOf('⬆️') > -1);
     el.classList.toggle('active', isActive);
   });
   if (!GSC) return;
-  var rows = tab === 'attack' ? (GSC.topAttack  || []) :
-             tab === 'ctr'    ? (GSC.topCTR     || []) :
-                                (GSC.topDefend   || []);
+  var rows = tab === 'attack'    ? (GSC.topAttack    || []) :
+             tab === 'ctr'       ? (GSC.topCTR       || []) :
+             tab === 'potential' ? (GSC.topPotential  || []) :
+                                   (GSC.topDefend      || []);
   var hints = {
-    attack: '🎯 排名 4–10，曝光 ≥50——衝前三名，這裡的報酬最高',
-    ctr:    '💡 曝光多但 CTR <2%——優化 Title / Meta 文案即可見效，不需改排名',
-    defend: '🛡️ 目前排名 1–3，曝光高——需要持續守住，警惕競品搶佔'
+    attack:    '🎯 排名 4–10，曝光 ≥50——衝前三名，這裡的報酬最高',
+    ctr:       '💡 曝光多但 CTR <2%——優化 Title / Meta 文案即可見效，不需改排名',
+    defend:    '🛡️ 目前排名 1–3，曝光高——需要持續守住，警惕競品搶佔',
+    potential: '⬆️ 排名 11–20，曝光 ≥30——距第一頁一步之遙，落地頁強化 + 外鏈可突破'
   };
   var tbl = document.getElementById('gscTable');
   if (!tbl) return;
@@ -1193,6 +1477,184 @@ function switchGscTab(tab) {
     '</tbody></table>';
 }
 
+/* ── [v4.0 NEW] GA4 流量分析 ── */
+var GA4  = null;
+var curGA4Tab = 'overview';
+
+function loadGA4Data() {
+  fetch(GAS_URL + '?format=ga4')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ GA4 = d; renderGA4Panel(d); })
+    .catch(function(e){
+      setHtml('ga4Card',
+        '<div style="padding:12px;color:var(--text2);font-size:12px;line-height:1.8">' +
+        '⚠️ GA4 載入失敗：' + esc(e.message || '未知錯誤') +
+        '</div>');
+    });
+}
+
+function refreshGA4() {
+  var btn = document.getElementById('ga4RefreshBtn');
+  btn.disabled = true; btn.textContent = '⏳ 抓取中…';
+  setHtml('ga4Card', empty('⏳', '正在重新抓取 GA4 數據，約需 15 秒…'));
+  fetch(GAS_URL + '?action=fetch_ga4')
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      toast('✅ GA4 數據已更新');
+      btn.disabled = false; btn.textContent = '🔄 重新抓取';
+      loadGA4Data();
+    })
+    .catch(function(e){
+      btn.disabled = false; btn.textContent = '🔄 重新抓取';
+      toast('❌ 抓取失敗：' + e.message);
+    });
+}
+
+function renderGA4Panel(d) {
+  if (!d || !d.totalSessions) {
+    setHtml('ga4Card',
+      '<div style="padding:14px;color:var(--text2);font-size:12px;line-height:2">' +
+      '📋 <strong style="color:var(--text)">GA4 尚未設定，請依以下步驟操作：</strong><br>' +
+      '1️⃣ Google Analytics → 管理 → 屬性設定，複製「屬性 ID」（純數字）<br>' +
+      '2️⃣ 在 GAS 程式碼 <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px">GA4_CONFIG.PROPERTY_ID</code> 填入 <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px">properties/你的ID</code><br>' +
+      '3️⃣ 在 GAS 編輯器 → 專案設定 → appsscript.json 新增 scope：<code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px">analytics.readonly</code><br>' +
+      '4️⃣ 點擊上方「🔄 重新抓取」即可載入數據' +
+      '</div>');
+    return;
+  }
+
+  var kpiGrid =
+    '<div class="ga4-kpi-grid">' +
+    _ga4Kpi('📊', Number(d.totalSessions).toLocaleString(),   '總工作階段',   '#7c5cfc') +
+    _ga4Kpi('🔍', Number(d.organicSessions).toLocaleString(), '自然搜尋',     '#22c55e') +
+    _ga4Kpi('📈', d.organicPct + '%',                         '自然流量佔比', '#f59e0b') +
+    _ga4Kpi('💬', d.avgEngagement + '%',                      '平均互動率',   '#3b82f6') +
+    '</div>';
+
+  var summary =
+    '<div class="ga4-summary">' +
+    '<span>🕐 更新：<strong style="color:var(--text)">' + esc(d.lastUpdated || '—') + '</strong></span>' +
+    '<span>📄 落地頁：<strong style="color:var(--text)">' + (d.topPages || []).length + ' 頁</strong></span>' +
+    '<span>🎯 轉換事件：<strong style="color:var(--text)">' + (d.events || []).length + ' 種</strong></span>' +
+    '</div>';
+
+  var tabs =
+    '<div class="ga4-tabs">' +
+    _ga4Tab('overview', '🌐 流量來源') +
+    _ga4Tab('pages',    '📄 自然落地頁 TOP 20') +
+    _ga4Tab('events',   '🎯 轉換事件') +
+    '</div>' +
+    '<div id="ga4Table"></div>';
+
+  setHtml('ga4Card', kpiGrid + summary + tabs);
+  switchGA4Tab('overview');
+}
+
+function _ga4Kpi(icon, num, label, color) {
+  return '<div class="ga4-kpi">' +
+    '<div class="ga4-kpi-icon">' + icon + '</div>' +
+    '<div class="ga4-kpi-num" style="color:' + color + '">' + num + '</div>' +
+    '<div class="ga4-kpi-label">' + label + '</div>' +
+    '</div>';
+}
+function _ga4Tab(key, label) {
+  return '<div class="ga4-tab' + (curGA4Tab === key ? ' active' : '') +
+    '" onclick="switchGA4Tab(\'' + key + '\')">' + label + '</div>';
+}
+
+function switchGA4Tab(tab) {
+  curGA4Tab = tab;
+  document.querySelectorAll('.ga4-tab').forEach(function(el) {
+    var isActive = (tab === 'overview' && el.textContent.indexOf('🌐') > -1) ||
+                   (tab === 'pages'    && el.textContent.indexOf('📄') > -1) ||
+                   (tab === 'events'   && el.textContent.indexOf('🎯') > -1);
+    el.classList.toggle('active', isActive);
+  });
+  if (!GA4) return;
+  var tbl = document.getElementById('ga4Table');
+  if (!tbl) return;
+
+  if (tab === 'overview') {
+    var rows = GA4.overview || [];
+    if (!rows.length) { tbl.innerHTML = empty('🔍', '尚無流量來源數據'); return; }
+    var maxS = Math.max.apply(null, rows.map(function(r){ return parseInt(r['工作階段']||0)||0; }));
+    tbl.innerHTML =
+      '<table class="ga4-table"><thead><tr>' +
+      '<th>流量來源</th><th>工作階段</th><th>互動率</th><th>平均停留</th><th>跳出率</th>' +
+      '</tr></thead><tbody>' +
+      rows.map(function(r) {
+        var s   = parseInt(r['工作階段'] || 0);
+        var pct = maxS ? Math.round(s / maxS * 100) : 0;
+        var eng = parseFloat(r['互動率(%)'] || 0);
+        var engCls = eng >= 60 ? 'eng-high' : eng >= 40 ? 'eng-mid' : 'eng-low';
+        var src = (r['流量來源'] || '');
+        var col = src.toLowerCase().includes('organic') ? '#22c55e' :
+                  src.toLowerCase().includes('paid')    ? '#f59e0b' :
+                  src.toLowerCase().includes('direct')  ? '#7c5cfc' :
+                  src.toLowerCase().includes('social')  ? '#ec4899' : '#3b82f6';
+        return '<tr>' +
+          '<td style="font-weight:600">' + esc(src) + '</td>' +
+          '<td>' +
+            '<div class="ga4-ch-bar">' +
+            '<span style="min-width:44px;font-weight:800">' + s.toLocaleString() + '</span>' +
+            '<div class="ga4-bar-wrap"><div class="ga4-bar-fill" style="width:' + pct + '%;background:' + col + '"></div></div>' +
+            '</div>' +
+          '</td>' +
+          '<td><span class="eng-badge ' + engCls + '">' + eng + '%</span></td>' +
+          '<td>' + (r['平均停留(秒)'] || 0) + 's</td>' +
+          '<td>' + (r['跳出率(%)'] || 0) + '%</td>' +
+          '</tr>';
+      }).join('') +
+      '</tbody></table>';
+  }
+
+  else if (tab === 'pages') {
+    var rows = (GA4.topPages || []).slice(0, 20);
+    if (!rows.length) { tbl.innerHTML = empty('🔍', '尚無落地頁數據'); return; }
+    tbl.innerHTML =
+      '<div class="gsc-hint">📌 來自自然搜尋的落地頁——互動率低（&lt;40%）表示頁面需要優化</div>' +
+      '<table class="ga4-table"><thead><tr>' +
+      '<th>落地頁路徑</th><th>自然工作階段</th><th>互動率</th><th>停留(秒)</th><th>轉換</th>' +
+      '</tr></thead><tbody>' +
+      rows.map(function(r) {
+        var eng = parseFloat(r['互動率(%)'] || 0);
+        var engCls = eng >= 60 ? 'eng-high' : eng >= 40 ? 'eng-mid' : 'eng-low';
+        var path = (r['落地頁路徑'] || '').replace('https://www.joyhouse-rental.com','').substring(0, 45) || '/';
+        var conv = parseInt(r['轉換次數'] || 0);
+        return '<tr>' +
+          '<td class="gsc-kw" title="' + esc(r['落地頁路徑']||'') + '">' + esc(path) + '</td>' +
+          '<td style="font-weight:800">' + parseInt(r['自然工作階段']||0).toLocaleString() + '</td>' +
+          '<td><span class="eng-badge ' + engCls + '">' + eng + '%</span></td>' +
+          '<td>' + (r['平均停留(秒)'] || 0) + 's</td>' +
+          '<td>' + (conv > 0 ? '<span class="eng-badge eng-high">' + conv + '</span>' : '<span style="color:var(--text3)">—</span>') + '</td>' +
+          '</tr>';
+      }).join('') +
+      '</tbody></table>';
+  }
+
+  else if (tab === 'events') {
+    var rows = GA4.events || [];
+    if (!rows.length) {
+      tbl.innerHTML = empty('🎯', '尚無轉換事件（請在 GA4 管理介面標記轉換事件）');
+      return;
+    }
+    tbl.innerHTML =
+      '<div class="gsc-hint">🎯 標記為「轉換」的事件對應真實業務目標——表單送出、電話點擊等</div>' +
+      '<table class="ga4-table"><thead><tr>' +
+      '<th>事件名稱</th><th>觸發次數</th><th>轉換次數</th>' +
+      '</tr></thead><tbody>' +
+      rows.map(function(r) {
+        var conv = parseInt(r['轉換次數'] || 0);
+        return '<tr>' +
+          '<td style="font-weight:600">' + esc(r['事件名稱'] || '') + '</td>' +
+          '<td style="font-weight:800">' + parseInt(r['事件次數']||0).toLocaleString() + '</td>' +
+          '<td>' + (conv > 0 ? '<span class="eng-badge eng-high">' + conv + '</span>' : '<span style="color:var(--text3)">—</span>') + '</td>' +
+          '</tr>';
+      }).join('') +
+      '</tbody></table>';
+  }
+}
+
 /* ── Helpers ── */
 function setHtml(id, html) { document.getElementById(id).innerHTML = html; }
 function empty(icon, msg)  { return '<div class="empty"><div class="e-icon">' + icon + '</div><p>' + esc(msg) + '</p></div>'; }
@@ -1214,6 +1676,395 @@ function toast(msg) {
   el.classList.remove('hide');
   clearTimeout(_tt);
   _tt = setTimeout(function() { el.classList.add('hide'); }, 3600);
+}
+
+/* ═══════════════════════════════════════════════
+   TREND TRACKER JS (v4.0)
+═══════════════════════════════════════════════ */
+var TREND = null;       // getAllWatchlistHistory() 回傳的資料
+var SITE_TREND = null;  // getSiteTrendData() 回傳的資料
+var trendDays   = 30;   // 目前選擇的時間範圍
+var selectedKws = [];   // 已選關鍵字（最多 5 個）
+var kwChartObj  = null; // Chart.js instance（關鍵字圖）
+var siteChartObj= null; // Chart.js instance（全站圖）
+
+/* 調色盤（最多 5 個關鍵字） */
+var KW_COLORS = ['#7c5cfc','#06b6d4','#f59e0b','#ec4899','#22c55e'];
+
+/* ── 載入資料 ── */
+function loadTrendData() {
+  fetch(GAS_URL + '?action=getWatchlistHistory&days=' + trendDays)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      TREND = d;
+      renderAlertBanners(d);
+      initKwDropdown(d.keywords || []);
+      // 預設選前 3 名（有歷史資料的關鍵字優先）
+      if (!selectedKws.length && d.keywords && d.keywords.length) {
+        var withData = d.keywords.filter(function(kw){ return d.history[kw] && d.history[kw].length > 1; });
+        selectedKws = withData.slice(0, 3);
+        if (!selectedKws.length) selectedKws = d.keywords.slice(0, 3);
+      }
+      renderKwTagsUI();
+      redrawKwChart();
+      if (d.checkedAt) document.getElementById('trendUpdatedAt').textContent = '更新：' + d.checkedAt;
+    })
+    .catch(function(e){
+      setHtml('kwChartWrap', '<div style="padding:20px;color:var(--text2);font-size:12px">⚠️ 趨勢資料載入失敗：' + esc(e.message) + '<br><small>請確認已完成 TrendTracker 部署步驟（見 GAS 說明）</small></div>');
+    });
+
+  fetch(GAS_URL + '?action=getSiteTrend&days=' + trendDays)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      SITE_TREND = d;
+      redrawSiteChart();
+    })
+    .catch(function(e){ console.warn('全站趨勢載入失敗:', e.message); });
+}
+
+/* ── 重新整理 ── */
+function refreshTrendData() {
+  var btn = document.getElementById('trendRefreshBtn');
+  btn.disabled = true; btn.textContent = '⏳ 載入中…';
+  TREND = null; SITE_TREND = null;
+  setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>重新載入中…</p></div>');
+  setHtml('siteChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>重新載入中…</p></div>');
+  if (kwChartObj)   { kwChartObj.destroy();   kwChartObj   = null; }
+  if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
+  loadTrendData();
+  setTimeout(function(){ btn.disabled = false; btn.textContent = '🔄 重新整理'; }, 4000);
+}
+
+/* ── 切換時間範圍 ── */
+function setTrendDays(days) {
+  trendDays = days;
+  ['7','30','90'].forEach(function(d){
+    var el = document.getElementById('tbtn' + d);
+    if (el) el.classList.toggle('active', String(days) === d);
+  });
+  if (kwChartObj)   { kwChartObj.destroy();   kwChartObj   = null; }
+  if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
+  loadTrendData();
+}
+
+/* ── 警示 Banner ── */
+function renderAlertBanners(d) {
+  var alerts    = d.alerts    || [];
+  var dropCount = d.dropCount || 0;
+  var riseCount = d.riseCount || 0;
+  var el = document.getElementById('alertBanners');
+  if (!el) return;
+
+  var html = '';
+  if (dropCount > 0) {
+    var kwList = alerts.filter(function(a){ return a.type==='drop'; })
+      .map(function(a){ return '【' + esc(a.keyword) + '】 #' + a.startPosition + ' → #' + a.currentPosition; })
+      .join('　');
+    html += '<div class="alert-banner drop">' +
+      '<div class="ab-icon">🔴</div>' +
+      '<div class="ab-body">' +
+        '<div class="ab-title">連續 7 天排名下滑！（' + dropCount + ' 個關鍵字）</div>' +
+        '<div class="ab-kws">' + kwList + '</div>' +
+      '</div></div>';
+  }
+  if (riseCount > 0) {
+    var kwList2 = alerts.filter(function(a){ return a.type==='rise'; })
+      .map(function(a){ return '【' + esc(a.keyword) + '】 #' + a.startPosition + ' → #' + a.currentPosition; })
+      .join('　');
+    html += '<div class="alert-banner rise">' +
+      '<div class="ab-icon">🟢</div>' +
+      '<div class="ab-body">' +
+        '<div class="ab-title">連續 7 天排名上升！（' + riseCount + ' 個關鍵字）</div>' +
+        '<div class="ab-kws">' + kwList2 + '</div>' +
+      '</div></div>';
+  }
+  el.innerHTML = html;
+
+  /* 詳細清單 */
+  var listCard = document.getElementById('alertListCard');
+  var listBody = document.getElementById('alertListBody');
+  var listTitle= document.getElementById('alertListTitle');
+  if (!listCard || !listBody) return;
+  if (!alerts.length) { listCard.style.display = 'none'; return; }
+  listCard.style.display = 'block';
+  listTitle.textContent = '⚠️ 排名異動詳情（' + alerts.length + ' 筆）';
+  listBody.innerHTML = alerts.map(function(a) {
+    var badgeCls = a.type === 'drop' ? 'ab-drop' : 'ab-rise';
+    var badgeTxt = a.type === 'drop' ? '▼ 下滑 +' + a.change + '位' : '▲ 上升 -' + a.change + '位';
+    return '<div class="alert-row">' +
+      '<span class="alert-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
+      '<span class="alert-kw">' + esc(a.keyword) + '</span>' +
+      '<span class="alert-pos">起：#' + a.startPosition + '　→　現：#' + a.currentPosition + '</span>' +
+      '<span style="font-size:10px;color:var(--text3)">' + esc(a.alertTime||'') + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleAlertList() {
+  var body = document.getElementById('alertListBody');
+  var chev = document.getElementById('alertListChevron');
+  if (!body) return;
+  var open = body.classList.toggle('open');
+  if (chev) chev.textContent = open ? '▼' : '▶';
+}
+
+/* ── 關鍵字下拉選單 ── */
+var _allKws = [];
+function initKwDropdown(keywords) {
+  _allKws = keywords;
+  renderKwDropdownItems(keywords);
+}
+function filterKwDropdown() {
+  var q = (document.getElementById('kwSearchInput').value || '').toLowerCase();
+  var filtered = q ? _allKws.filter(function(kw){ return kw.toLowerCase().includes(q); }) : _allKws;
+  renderKwDropdownItems(filtered);
+  openKwDropdown();
+}
+function renderKwDropdownItems(list) {
+  var dd = document.getElementById('kwDropdown');
+  if (!dd) return;
+  if (!list.length) { dd.innerHTML = '<div style="padding:10px 12px;color:var(--text3);font-size:12px">無符合結果</div>'; return; }
+  dd.innerHTML = list.slice(0, 60).map(function(kw) {
+    var sel = selectedKws.indexOf(kw) > -1;
+    return '<div class="kw-option' + (sel ? ' selected' : '') + '" onclick="toggleKw(\'' + escAttr(kw) + '\')">' +
+      '<div class="kw-option-check">' + (sel ? '✓' : '') + '</div>' +
+      esc(kw) +
+    '</div>';
+  }).join('');
+}
+function openKwDropdown() {
+  var dd = document.getElementById('kwDropdown');
+  if (dd) dd.classList.add('open');
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('kwSearchWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    var dd = document.getElementById('kwDropdown');
+    if (dd) dd.classList.remove('open');
+  }
+});
+function toggleKw(kw) {
+  var idx = selectedKws.indexOf(kw);
+  if (idx > -1) {
+    selectedKws.splice(idx, 1);
+  } else {
+    if (selectedKws.length >= 5) { toast('⚠️ 最多同時比較 5 個關鍵字'); return; }
+    selectedKws.push(kw);
+  }
+  renderKwTagsUI();
+  renderKwDropdownItems(_allKws.filter(function(k){
+    var q = (document.getElementById('kwSearchInput').value || '').toLowerCase();
+    return q ? k.toLowerCase().includes(q) : true;
+  }));
+  redrawKwChart();
+}
+function removeKw(kw) {
+  selectedKws = selectedKws.filter(function(k){ return k !== kw; });
+  renderKwTagsUI();
+  redrawKwChart();
+}
+function renderKwTagsUI() {
+  var el = document.getElementById('kwSelectedTags');
+  if (!el) return;
+  el.innerHTML = selectedKws.map(function(kw, i) {
+    var col = KW_COLORS[i % KW_COLORS.length];
+    return '<span class="kw-tag" style="background:' + col + '22;color:' + col + ';border-color:' + col + '44">' +
+      esc(kw) +
+      '<span class="kw-tag-rm" onclick="removeKw(\'' + escAttr(kw) + '\')">×</span>' +
+    '</span>';
+  }).join('');
+}
+function escAttr(s) { return String(s).replace(/'/g, "\\'"); }
+
+/* ── 關鍵字排名折線圖 ── */
+function redrawKwChart() {
+  var wrap = document.getElementById('kwChartWrap');
+  if (!wrap) return;
+
+  if (!TREND || !TREND.history) {
+    setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>資料載入中…</p></div>');
+    return;
+  }
+  if (!selectedKws.length) {
+    setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">🔍</div><p>請從上方搜尋並選擇要追蹤的關鍵字</p></div>');
+    return;
+  }
+
+  var metric = document.getElementById('kwMetricSel') ? document.getElementById('kwMetricSel').value : 'position';
+
+  // 收集所有日期（聯集後排序）
+  var dateSet = {};
+  selectedKws.forEach(function(kw) {
+    var hist = TREND.history[kw] || [];
+    hist.forEach(function(pt){ dateSet[pt.date] = true; });
+  });
+  var allDates = Object.keys(dateSet).sort();
+
+  if (!allDates.length) {
+    setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">📭</div><p>所選關鍵字尚無歷史資料<br><small>請先在 GAS 執行 backfillHistory()</small></p></div>');
+    return;
+  }
+
+  var datasets = selectedKws.map(function(kw, i) {
+    var hist = TREND.history[kw] || [];
+    var histMap = {};
+    hist.forEach(function(pt){ histMap[pt.date] = pt; });
+
+    var color = KW_COLORS[i % KW_COLORS.length];
+    var values = allDates.map(function(d) {
+      var pt = histMap[d];
+      if (!pt) return null;
+      if (metric === 'position')    return pt.position;
+      if (metric === 'ctr')         return pt.ctr;
+      if (metric === 'clicks')      return pt.clicks;
+      if (metric === 'impressions') return pt.impressions;
+      return null;
+    });
+
+    return {
+      label: kw,
+      data: values,
+      borderColor: color,
+      backgroundColor: color + '18',
+      pointBackgroundColor: color,
+      pointRadius: allDates.length > 45 ? 2 : 4,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+      tension: 0.3,
+      spanGaps: true,
+      fill: false,
+    };
+  });
+
+  // 建立/更新 Chart.js
+  if (kwChartObj) { kwChartObj.destroy(); kwChartObj = null; }
+  wrap.innerHTML = '<canvas id="kwChartCanvas"></canvas>';
+  var canvas = document.getElementById('kwChartCanvas');
+  if (!canvas) return;
+
+  var isPosition = metric === 'position';
+  var yLabel = { position:'排名', ctr:'CTR (%)', clicks:'點擊數', impressions:'曝光數' }[metric] || metric;
+
+  kwChartObj = new Chart(canvas, {
+    type: 'line',
+    data: { labels: allDates, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 18 } },
+        tooltip: {
+          backgroundColor: '#12121e', borderColor: '#2a2a45', borderWidth: 1,
+          titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.raw;
+              if (v === null || v === undefined) return ctx.dataset.label + '：無資料';
+              if (isPosition) return ctx.dataset.label + '：#' + v.toFixed(1) + ' 名';
+              if (metric === 'ctr') return ctx.dataset.label + '：' + v.toFixed(2) + '%';
+              return ctx.dataset.label + '：' + (v || 0).toLocaleString();
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 10 } },
+          grid:  { color: 'rgba(255,255,255,.04)' }
+        },
+        y: {
+          reverse: isPosition, // 排名圖 Y 軸反轉（1 在頂端）
+          ticks: { color: '#64748b', font: { size: 10 } },
+          grid:  { color: 'rgba(255,255,255,.06)' },
+          title: { display: true, text: yLabel, color: '#64748b', font: { size: 10 } }
+        }
+      }
+    }
+  });
+  document.getElementById('kwChartNote').textContent = '資料來源：GSC 每日快照 · ' + allDates[0] + ' ~ ' + allDates[allDates.length - 1];
+}
+
+/* ── 全站指標折線圖 ── */
+function redrawSiteChart() {
+  var wrap = document.getElementById('siteChartWrap');
+  if (!wrap) return;
+
+  if (!SITE_TREND || !SITE_TREND.dates || !SITE_TREND.dates.length) {
+    setHtml('siteChartWrap', '<div class="empty"><div class="e-icon">📭</div><p>全站指標尚無資料<br><small>請確認 TrendTracker 已部署並執行 backfillHistory()</small></p></div>');
+    return;
+  }
+
+  var metric  = document.getElementById('siteMetricSel') ? document.getElementById('siteMetricSel').value : 'clicks';
+  var metaMap = {
+    clicks:      { label: '點擊數',   color: '#7c5cfc', unit: '' },
+    impressions: { label: '曝光數',   color: '#06b6d4', unit: '' },
+    ctrs:        { label: 'CTR (%)',  color: '#f59e0b', unit: '%' },
+    avgPositions:{ label: '平均排名', color: '#ec4899', unit: ' 名' },
+  };
+  var meta    = metaMap[metric] || metaMap.clicks;
+  var values  = SITE_TREND[metric] || [];
+  var dates   = SITE_TREND.dates   || [];
+
+  if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
+  wrap.innerHTML = '<canvas id="siteChartCanvas"></canvas>';
+  var canvas = document.getElementById('siteChartCanvas');
+  if (!canvas) return;
+
+  var isRankMetric = metric === 'avgPositions';
+
+  siteChartObj = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+        label: meta.label,
+        data: values,
+        borderColor: meta.color,
+        backgroundColor: meta.color + '18',
+        pointBackgroundColor: meta.color,
+        pointRadius: dates.length > 45 ? 2 : 4,
+        pointHoverRadius: 6,
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#12121e', borderColor: '#2a2a45', borderWidth: 1,
+          titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.raw;
+              if (v === null || v === undefined) return '無資料';
+              if (isRankMetric) return meta.label + '：#' + parseFloat(v).toFixed(1) + meta.unit;
+              if (metric === 'ctrs') return meta.label + '：' + parseFloat(v).toFixed(2) + meta.unit;
+              return meta.label + '：' + parseInt(v).toLocaleString() + meta.unit;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 10 } },
+          grid:  { color: 'rgba(255,255,255,.04)' }
+        },
+        y: {
+          reverse: isRankMetric,
+          ticks: { color: '#64748b', font: { size: 10 } },
+          grid:  { color: 'rgba(255,255,255,.06)' },
+          title: { display: true, text: meta.label, color: '#64748b', font: { size: 10 } }
+        }
+      }
+    }
+  });
+  var note = document.getElementById('siteChartNote');
+  if (note && dates.length) {
+    note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）';
+  }
 }
 </script>
 </body>
