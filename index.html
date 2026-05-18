@@ -275,6 +275,17 @@ body {
 .sch-fill   { height: 100%; border-radius: 3px; transition: width .7s ease; }
 .sch-tag    { font-size: 9px; padding: 1px 6px; border-radius: 10px; background: rgba(124,92,252,.15); color: var(--accent3); }
 
+.sch-note {
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--text2, #94a3b8);
+  background: rgba(124, 92, 250, 0.08);
+  border-left: 3px solid #a78bfa;
+  border-radius: 4px;
+  line-height: 1.6;
+}
+.sch-note b { color: #c4b5fd; font-weight: 600; }
 .sch-alert {
   margin-top: 10px;
   padding: 9px 12px;
@@ -1138,6 +1149,13 @@ function renderSchemaBreakdown(sb) {
     '</div>';
   }).join('');
   var html = '<div class="sch-grid">' + grid + '</div>';
+  // [v4.1 新增] 分母透明化說明
+  var dn = sb.denominators || { all:0, work:0, faqExpected:0 };
+  html += '<div class="sch-note">💡 <b>分母依頁面類型計算：</b>' +
+          'LocalBusiness／BreadcrumbList／og:image 用全站 <b>' + dn.all + '</b> 頁；' +
+          'ImageObject／CreativeWork 用 work CPT <b>' + dn.work + '</b> 頁；' +
+          'FAQPage 用風格分類+服務落地頁 <b>' + dn.faqExpected + '</b> 頁。' +
+          '<br>過去版本誤用全站分母導致假性低覆蓋率。</div>';
   if (sb.duplicateIssue && sb.duplicateIssue > 0) {
     html += '<div class="sch-alert">⚠️ 偵測到 ' + sb.duplicateIssue +
             ' 頁有 Schema 重複問題(常見:Rank Math + 自訂 plugin 各出一份 FAQPage)。詳見任務清單。</div>';
