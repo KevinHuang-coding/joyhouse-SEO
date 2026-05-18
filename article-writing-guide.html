@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章撰寫建議｜滿屋設計 SEO Engine</title>
+<style>
+:root {
+  --bg: #0f172a; --bg2: #1e293b; --card: #1e293b;
+  --text: #e2e8f0; --text2: #94a3b8;
+  --accent: #a78bfa; --green: #22c55e; --orange: #f59e0b; --red: #ef4444;
+  --border: rgba(148, 163, 184, 0.15);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 24px 20px 80px; }
+.hdr {
+  background: linear-gradient(135deg, #1e293b 0%, #312e81 100%);
+  border-radius: 12px; padding: 28px 32px; margin-bottom: 24px;
+  border: 1px solid var(--border);
+}
+.hdr h1 { margin: 0 0 8px; font-size: 28px; }
+.hdr .sub { color: var(--text2); font-size: 14px; }
+.back-link {
+  display: inline-block; margin-bottom: 16px; padding: 6px 14px;
+  background: rgba(167, 139, 250, 0.15); color: var(--accent);
+  border-radius: 6px; text-decoration: none; font-size: 13px;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+}
+.back-link:hover { background: rgba(167, 139, 250, 0.25); }
+.sec {
+  background: var(--card); border-radius: 10px; padding: 24px 28px;
+  margin-bottom: 18px; border: 1px solid var(--border);
+}
+.sec h2 {
+  margin: 0 0 16px; font-size: 19px; color: var(--accent);
+  border-bottom: 1px solid var(--border); padding-bottom: 8px;
+}
+.sec h3 { margin: 18px 0 8px; font-size: 15px; color: #c4b5fd; }
+.sec p { margin: 8px 0; }
+ul, ol { padding-left: 22px; }
+li { margin: 4px 0; }
+.checklist {
+  background: rgba(34, 197, 94, 0.08); border-left: 3px solid var(--green);
+  padding: 12px 16px; border-radius: 6px; margin: 10px 0;
+}
+.checklist li { list-style: none; position: relative; padding-left: 22px; }
+.checklist li::before {
+  content: "☐"; position: absolute; left: 0; color: var(--green);
+  font-weight: bold;
+}
+.warn {
+  background: rgba(245, 158, 11, 0.08); border-left: 3px solid var(--orange);
+  padding: 12px 16px; border-radius: 6px; margin: 10px 0; font-size: 14px;
+}
+.code {
+  background: #0a0f1c; border: 1px solid var(--border); border-radius: 6px;
+  padding: 14px 16px; font-family: "Monaco", "Cascadia Code", monospace;
+  font-size: 12.5px; line-height: 1.6; color: #c4b5fd;
+  white-space: pre-wrap; word-break: break-word; margin: 12px 0;
+}
+table {
+  width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px;
+}
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: rgba(167, 139, 250, 0.1); color: var(--accent); font-weight: 600; }
+tr:hover { background: rgba(255, 255, 255, 0.02); }
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; margin-right: 4px;
+}
+.b-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+.b-mid  { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.b-low  { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+.toc {
+  background: rgba(167, 139, 250, 0.05); border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 8px; padding: 16px 22px; margin-bottom: 20px;
+}
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--accent); }
+.toc ol { margin: 8px 0 0; }
+.kv { display: grid; grid-template-columns: 140px 1fr; gap: 8px 16px; margin: 8px 0; font-size: 13.5px; }
+.kv .k { color: var(--accent); font-weight: 600; }
+.footer {
+  text-align: center; color: var(--text2); font-size: 12px;
+  padding: 24px 0 12px; border-top: 1px solid var(--border); margin-top: 30px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<a href="index.html" class="back-link">← 返回 SEO Engine Dashboard</a>
+
+<div class="hdr">
+  <h1>✍️ 滿屋設計｜文章撰寫建議</h1>
+  <div class="sub">給設計師、文案、SEO 軍師的「寫一篇好文章」操作手冊 ・ v1.0 ・ 2026-05-18</div>
+</div>
+
+<div class="toc">
+  <b>📋 目錄</b>
+  <ol>
+    <li><a href="#sop">文章撰寫 SOP（5 步法）</a></li>
+    <li><a href="#structure">標準文章結構（H1/H2/H3 配置）</a></li>
+    <li><a href="#meta">SEO Meta 撰寫規範</a></li>
+    <li><a href="#topics">2026 推薦題目庫（依季節性）</a></li>
+    <li><a href="#prompt">ChatGPT/Claude Prompt 模板</a></li>
+    <li><a href="#checklist">寫作前/審稿 checklist</a></li>
+    <li><a href="#donts">滿屋設計禁忌與守則</a></li>
+  </ol>
+</div>
+
+<div class="sec" id="sop">
+<h2>1️⃣ 文章撰寫 SOP（5 步法）</h2>
+<ol>
+  <li><b>選題</b>：從 GSC 找「曝光高但 CTR 低」的關鍵字 → 這代表 Google 願意露你，但消費者不點 → 寫一篇強標題的文章可立即拿流量</li>
+  <li><b>競品偵察</b>：Google 搜該關鍵字看前 3 名（婚禮路線：良九、新娘物語、小殼手作；商業路線：高星活動、JIS、U-Design），看他們講什麼、缺什麼</li>
+  <li><b>找獨特角度</b>：滿屋的差異化是「主題包套式整合」「不只租賃還含設計」「全省服務」「B2B+B2C 雙線經驗」</li>
+  <li><b>結構化撰寫</b>：照下方「標準結構」寫，每段 100-200 字、總長 1,000-1,500 字</li>
+  <li><b>SEO 健檢</b>：寫完用 Rank Math 內建分析（綠燈 ≥80 分）+ 提交給軍師抽檢 Schema/Meta</li>
+</ol>
+</div>
+
+<div class="sec" id="structure">
+<h2>2️⃣ 標準文章結構（直接拿來填）</h2>
+
+<div class="kv">
+  <div class="k">H1（1 個）</div><div>含「主關鍵字 + 主訴求 + 品牌差異」例：「【婚禮佈置完整指南】從 5 萬到 50 萬的場景設計與費用規劃」</div>
+  <div class="k">第一段 100 字</div><div>主關鍵字出現 2 次、自然帶到「滿屋設計」一次、結尾留問題鉤子</div>
+  <div class="k">H2（4-6 個）</div><div>每個 H2 後面 200-300 字段落，從「問題 / 方案 / 案例 / 行動」鋪陳</div>
+  <div class="k">H3（每 H2 配 0-2 個）</div><div>細節展開、可用 list / 表格輔助</div>
+  <div class="k">圖片</div><div>每 300-500 字一張，alt 必填獨特描述（避免重複）</div>
+  <div class="k">內部連結</div><div>每 800 字 1-2 個，鏈到風格分類頁或服務落地頁</div>
+  <div class="k">FAQ 區塊</div><div>結尾 3-5 個問答，用 Rank Math FAQ block 寫（會自動上 FAQPage Schema 拿 Rich Snippet）</div>
+  <div class="k">CTA</div><div>「立即免費諮詢／LINE 加好友／加入 Email 名單」三選一</div>
+</div>
+</div>
+
+<div class="sec" id="meta">
+<h2>3️⃣ SEO Meta 撰寫規範</h2>
+
+<h3>Title（SEO 標題，55-60 字）</h3>
+<div class="code">[主關鍵字]｜[次關鍵字/賣點]｜滿屋設計</div>
+<p>✅ 範例：「聖誕新年節慶佈置｜社區・商場・企業空間｜滿屋設計」（5/14 已用此格式）</p>
+
+<h3>Meta Description（120-150 字）</h3>
+<div class="code">[做什麼] + [覆蓋範圍] + [差異化] + [CTA]</div>
+<p>✅ 範例：「滿屋設計承接社區、商辦、商場、企業大廳的聖誕與新年節慶佈置。大型裝置藝術、聖誕樹主題打卡區、跨年倒數氛圍規劃，讓你的空間在節慶成為最熱鬧的打卡地標。」（5/14 已用此格式）</p>
+
+<div class="warn">
+⚠️ <b>避免：</b>機械化模板（如「我們是專業的 XX，提供 XX 服務」）。Google 的 Helpful Content System 會降權這類內容。
+</div>
+</div>
+
+<div class="sec" id="topics">
+<h2>4️⃣ 2026 推薦題目庫（依季節性）</h2>
+
+<table>
+<thead>
+<tr><th>月份</th><th>建議題目</th><th>關鍵字</th><th>優先度</th></tr>
+</thead>
+<tbody>
+<tr><td>6 月</td><td>畢業舞會佈置完整指南</td><td>畢業舞會佈置、prom 佈置</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>6 月</td><td>新品發表會場地佈置</td><td>新品發表會佈置、記者會佈置</td><td><span class="badge b-mid">中</span></td></tr>
+<tr><td>7-8 月</td><td>聖誕跨年提前佈局指南（B2B 業者必看）</td><td>聖誕佈置、商場聖誕、社區聖誕</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>9-10 月</td><td>尾牙春酒早鳥規劃（早訂優惠）</td><td>尾牙佈置、春酒佈置、企業活動</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>11-12 月</td><td>聖誕佈置 Top 10 案例分享</td><td>聖誕佈置、聖誕樹佈置</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>1-2 月</td><td>婚禮佈置：5 萬／10 萬／20 萬／50 萬預算對照</td><td>婚禮佈置、婚禮會場佈置</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>3-5 月</td><td>5/20 婚禮高峰提前準備</td><td>520 婚禮、新人佈置</td><td><span class="badge b-mid">中</span></td></tr>
+<tr><td>長青</td><td>10 個婚禮佈置常見錯誤（新人必避）</td><td>婚禮佈置注意事項</td><td><span class="badge b-high">高</span></td></tr>
+<tr><td>長青</td><td>戶外婚禮 vs 室內婚禮：哪個適合你？</td><td>戶外婚禮佈置、戶外婚禮</td><td><span class="badge b-mid">中</span></td></tr>
+<tr><td>長青</td><td>場地選擇 × 佈置風格：完整對照表</td><td>婚禮場地、會場佈置</td><td><span class="badge b-low">低</span></td></tr>
+</tbody>
+</table>
+
+<p>💡 <b>更新節奏建議：</b>每月 2-4 篇，依季節時序提前 1.5-2 個月鋪文（聖誕文 9 月底就要上線）</p>
+</div>
+
+<div class="sec" id="prompt">
+<h2>5️⃣ ChatGPT/Claude Prompt 模板（複製即用）</h2>
+
+<div class="code">你是滿屋設計（joyhouse-rental.com）的專業文案編輯。
+請以 SEO 友善方式撰寫一篇文章：
+
+【主題】：[填入主題]
+【主關鍵字】：[填入 1 個主關鍵字]
+【次關鍵字】：[填入 2-3 個次關鍵字]
+【目標讀者】：[新人 / 企業 HR / 社區管委會 / 商場主管 擇一]
+【字數】：1,200 字
+【語氣】：專業但溫暖，B2B 與 B2C 之間的平衡
+
+【結構要求】：
+1. H1 含主關鍵字 + 痛點/欲望
+2. 第一段 100 字內含主關鍵字 2 次
+3. 4-6 個 H2 段落（問題-方案-案例-行動的鋪陳）
+4. 結尾 3 個 FAQ 問答
+5. 文末 CTA 引導 LINE 加好友或免費諮詢
+
+【SEO Meta】：
+- Title（55-60 字）：[主關鍵字]｜[賣點]｜滿屋設計
+- Meta Description（120-150 字）：[做什麼] + [覆蓋範圍] + [差異化] + [CTA]
+
+【滿屋設計品牌脈絡】：
+- 承接全省婚禮、商業活動、企業春酒、社區節慶、校園活動
+- 不只租賃，含完整設計與場控
+- 直接競爭：婚禮路線（良九、新娘物語、小殼手作）/ 商業路線（高星活動、JIS）
+- 不寫機械化模板、不抄競品
+
+請輸出：文章本體 + Title + Meta Description。</div>
+</div>
+
+<div class="sec" id="checklist">
+<h2>6️⃣ 寫作 checklist</h2>
+
+<h3>寫作前（給文案）</h3>
+<ul class="checklist">
+<li>主關鍵字確認過 GSC + Google Trends</li>
+<li>競品 Top 3 文章都看過、找到 1 個獨特角度</li>
+<li>確認文章對應的「服務落地頁」或「分類頁」內部連結目標</li>
+<li>準備 3-5 張原創或合法授權圖片（含 alt 描述）</li>
+</ul>
+
+<h3>寫完前審稿（給軍師 / 主編）</h3>
+<ul class="checklist">
+<li>H1 含主關鍵字、不超過 60 字</li>
+<li>Title (SEO) 含主關鍵字 + 「滿屋設計」</li>
+<li>Meta Description 120-150 字、含 CTA</li>
+<li>第一段 100 字內主關鍵字出現 2 次</li>
+<li>內部連結至少 2 個（風格分類頁 / 服務落地頁）</li>
+<li>FAQ block 3-5 題（拿 Rich Snippet）</li>
+<li>圖片 alt 全部填寫且不重複</li>
+<li>Rank Math SEO 分數 ≥ 80（綠燈）</li>
+</ul>
+</div>
+
+<div class="sec" id="donts">
+<h2>7️⃣ 滿屋設計禁忌與守則</h2>
+
+<table>
+<thead>
+<tr><th>禁忌</th><th>原因</th></tr>
+</thead>
+<tbody>
+<tr><td>❌ 寫「我們是專業的」這類空話</td><td>Google Helpful Content System 降權，且讀者不買單</td></tr>
+<tr><td>❌ 抄競品（良九、新娘物語、迪爾設計等）</td><td>會被 Google 偵測為重複內容</td></tr>
+<tr><td>❌ 把迪爾設計、520 氣球佈置列為對手</td><td>非同主戰場（他們做氣球派對）</td></tr>
+<tr><td>❌ Meta Description 用機械模板</td><td>CTR 慘淡，等於白做</td></tr>
+<tr><td>❌ 文章內塞太多關鍵字（密度 &gt;3%）</td><td>Google 視為過度優化會降權</td></tr>
+<tr><td>✅ 第一人稱「滿屋設計」（不要「本公司」）</td><td>更有溫度、品牌記憶度高</td></tr>
+<tr><td>✅ 引用真實案例（含客戶類型 + 場地 + 預算範圍）</td><td>建立 E-E-A-T（經驗、專業、權威、可信度）</td></tr>
+<tr><td>✅ 結尾留 CTA 鉤子（LINE / 免費諮詢）</td><td>把流量轉換為詢價</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="footer">
+滿屋設計 SEO Engine ・ 軍師（Claude）建立於 2026-05-18 ・ <a href="index.html" style="color: var(--accent);">返回 Dashboard</a>
+</div>
+
+</div>
+</body>
+</html>
