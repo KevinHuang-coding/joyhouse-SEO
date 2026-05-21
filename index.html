@@ -1718,11 +1718,18 @@ function loadTrendData() {
       TREND = d;
       renderAlertBanners(d);
       initKwDropdown(d.keywords || []);
-      // 預設選前 3 名（有歷史資料的關鍵字優先）
+      // 預設關鍵字：優先鎖定攻堅主星「婚禮佈置」「會場佈置」（軍師 2026-05-21 改）
       if (!selectedKws.length && d.keywords && d.keywords.length) {
-        var withData = d.keywords.filter(function(kw){ return d.history[kw] && d.history[kw].length > 1; });
-        selectedKws = withData.slice(0, 3);
-        if (!selectedKws.length) selectedKws = d.keywords.slice(0, 3);
+        var PREFERRED_KWS = ['婚禮佈置', '會場佈置'];
+        var preferred = PREFERRED_KWS.filter(function(kw){ return d.keywords.indexOf(kw) !== -1; });
+        if (preferred.length) {
+          selectedKws = preferred;
+        } else {
+          // fallback：選前 3 名（有歷史資料的關鍵字優先）
+          var withData = d.keywords.filter(function(kw){ return d.history[kw] && d.history[kw].length > 1; });
+          selectedKws = withData.slice(0, 3);
+          if (!selectedKws.length) selectedKws = d.keywords.slice(0, 3);
+        }
       }
       renderKwTagsUI();
       redrawKwChart();
@@ -2111,17 +2118,4 @@ function redrawSiteChart() {
         y: {
           reverse: isRankMetric,
           ticks: { color: '#64748b', font: { size: 10 } },
-          grid:  { color: 'rgba(255,255,255,.06)' },
-          title: { display: true, text: meta.label, color: '#64748b', font: { size: 10 } }
-        }
-      }
-    }
-  });
-  var note = document.getElementById('siteChartNote');
-  if (note && dates.length) {
-    note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）';
-  }
-}
-</script>
-</body>
-</html>
+          grid:  { color: '
