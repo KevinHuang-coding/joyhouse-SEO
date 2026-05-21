@@ -895,15 +895,33 @@ body {
 
   <!-- 全站指標折線圖 -->
   <div class="chart-card">
-    <div class="chart-card-title">🌐 全站 GSC 指標趨勢
-      <select class="trend-metric-select" id="siteMetricSel"
-        style="margin-left:auto"
-        onchange="redrawSiteChart()">
+    <div class="chart-card-title">🌐 全站 GSC 指標趨勢</div>
+    <!-- 全站圖控制列（軍師 2026-05-21 加：90天 + 趨勢線 + 雙指標）-->
+    <div class="trend-controls" style="margin:8px 0 12px">
+      <span class="trend-label">時間範圍</span>
+      <button class="trend-range-btn" onclick="setSiteTrendDays(7)"  id="sbtn7">7 天</button>
+      <button class="trend-range-btn active" onclick="setSiteTrendDays(30)" id="sbtn30">30 天</button>
+      <button class="trend-range-btn" onclick="setSiteTrendDays(90)" id="sbtn90">90 天</button>
+      <div class="trend-sep"></div>
+      <span class="trend-label">指標 1</span>
+      <select class="trend-metric-select" id="siteMetricSel" onchange="redrawSiteChart()">
         <option value="clicks">點擊數</option>
         <option value="impressions">曝光數</option>
         <option value="ctrs">CTR (%)</option>
         <option value="avgPositions">平均排名</option>
       </select>
+      <span class="trend-label">指標 2</span>
+      <select class="trend-metric-select" id="siteMetricSel2" onchange="redrawSiteChart()">
+        <option value="">無</option>
+        <option value="clicks">點擊數</option>
+        <option value="impressions">曝光數</option>
+        <option value="ctrs">CTR (%)</option>
+        <option value="avgPositions">平均排名</option>
+      </select>
+      <div class="trend-sep"></div>
+      <label class="trend-label" style="cursor:pointer;user-select:none">
+        <input type="checkbox" id="siteTrendlineChk" onchange="redrawSiteChart()" style="vertical-align:middle;margin-right:3px">7 天趨勢線
+      </label>
     </div>
     <div class="chart-canvas-wrap" id="siteChartWrap">
       <div class="empty"><div class="e-icon">⏳</div><p>載入全站指標中…</p></div>
@@ -1706,6 +1724,7 @@ var trendDays   = 30;   // 目前選擇的時間範圍
 var selectedKws = [];   // 已選關鍵字（最多 5 個）
 var kwChartObj  = null; // Chart.js instance（關鍵字圖）
 var siteChartObj= null; // Chart.js instance（全站圖）
+var siteTrendDays = 30; // 全站圖獨立時間範圍（軍師 2026-05-21 加）
 
 /* 調色盤（最多 5 個關鍵字） */
 var KW_COLORS = ['#7c5cfc','#06b6d4','#f59e0b','#ec4899','#22c55e'];
@@ -1739,7 +1758,7 @@ function loadTrendData() {
       setHtml('kwChartWrap', '<div style="padding:20px;color:var(--text2);font-size:12px">⚠️ 趨勢資料載入失敗：' + esc(e.message) + '<br><small>請確認已完成 TrendTracker 部署步驟（見 GAS 說明）</small></div>');
     });
 
-  fetch(GAS_URL + '?action=getSiteTrend&days=' + trendDays)
+  fetch(GAS_URL + '?action=getSiteTrend&days=' + siteTrendDays)
     .then(function(r){ return r.json(); })
     .then(function(d){
       SITE_TREND = d;
@@ -2038,7 +2057,39 @@ function redrawKwChart() {
   document.getElementById('kwChartNote').textContent = '資料來源：GSC 每日快照 · ' + allDates[0] + ' ~ ' + allDates[allDates.length - 1];
 }
 
-/* ── 全站指標折線圖 ── */
+/* ── 7 天移動平均（趨勢線用，軍師 2026-05-21 加）── */
+function _movingAvg(arr, win) {
+  win = win || 7;
+  var out = [];
+  for (var i = 0; i < arr.length; i++) {
+    var sum = 0, n = 0;
+    for (var j = Math.max(0, i - win + 1); j <= i; j++) {
+      var x = arr[j];
+      if (x !== null && x !== undefined && !isNaN(x)) { sum += Number(x); n++; }
+    }
+    out.push(n ? Math.round((sum / n) * 100) / 100 : null);
+  }
+  return out;
+}
+
+/* ── 全站圖獨立時間範圍切換（軍師 2026-05-21 加）── */
+function setSiteTrendDays(days) {
+  siteTrendDays = days;
+  ['7','30','90'].forEach(function(d){
+    var el = document.getElementById('sbtn' + d);
+    if (el) el.classList.toggle('active', String(days) === d);
+  });
+  if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
+  setHtml('siteChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>載入中…</p></div>');
+  fetch(GAS_URL + '?action=getSiteTrend&days=' + siteTrendDays)
+    .then(function(r){ return r.json(); })
+    .then(function(d){ SITE_TREND = d; redrawSiteChart(); })
+    .catch(function(e){
+      setHtml('siteChartWrap', '<div style="padding:20px;color:var(--text2);font-size:12px">⚠️ 全站指標載入失敗：' + esc(e.message) + '</div>');
+    });
+}
+
+/* ── 全站指標折線圖（軍師 2026-05-21 改：雙指標雙 Y 軸 + 7 天趨勢線）── */
 function redrawSiteChart() {
   var wrap = document.getElementById('siteChartWrap');
   if (!wrap) return;
@@ -2048,85 +2099,117 @@ function redrawSiteChart() {
     return;
   }
 
-  var metric  = document.getElementById('siteMetricSel') ? document.getElementById('siteMetricSel').value : 'clicks';
   var metaMap = {
     clicks:      { label: '點擊數',   color: '#7c5cfc', unit: '' },
     impressions: { label: '曝光數',   color: '#06b6d4', unit: '' },
     ctrs:        { label: 'CTR (%)',  color: '#f59e0b', unit: '%' },
-    avgPositions:{ label: '平均排名', color: '#ec4899', unit: ' 名' },
+    avgPositions:{ label: '平均排名', color: '#ec4899', unit: ' 名' }
   };
-  var meta    = metaMap[metric] || metaMap.clicks;
-  var values  = SITE_TREND[metric] || [];
-  var dates   = (SITE_TREND.dates || []).map(_normDate).filter(Boolean);
+  var m1 = document.getElementById('siteMetricSel')  ? document.getElementById('siteMetricSel').value  : 'clicks';
+  var m2 = document.getElementById('siteMetricSel2') ? document.getElementById('siteMetricSel2').value : '';
+  if (!metaMap[m1]) m1 = 'clicks';
+  if (m2 === m1) m2 = '';
+  var dual = !!metaMap[m2];
+  var showTrend = !!(document.getElementById('siteTrendlineChk') && document.getElementById('siteTrendlineChk').checked);
+
+  var dates = (SITE_TREND.dates || []).map(_normDate).filter(Boolean);
 
   if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
   wrap.innerHTML = '<canvas id="siteChartCanvas"></canvas>';
   var canvas = document.getElementById('siteChartCanvas');
   if (!canvas) return;
 
-  var isRankMetric = metric === 'avgPositions';
+  var siteTicks = siteTrendDays <= 7 ? 7 : siteTrendDays <= 30 ? 10 : 12;
+  var datasets = [];
+  var scales = {
+    x: {
+      ticks: {
+        color: '#64748b', maxTicksLimit: siteTicks, font: { size: 10 },
+        callback: function(val) {
+          var label = this.getLabelForValue ? this.getLabelForValue(val) : String(val);
+          var dd = _normDate(label);
+          return dd ? dd.slice(5) : label;
+        }
+      },
+      grid: { color: 'rgba(255,255,255,.04)' }
+    }
+  };
+
+  function addMetric(metric, axisId, side) {
+    var meta = metaMap[metric];
+    var vals = SITE_TREND[metric] || [];
+    datasets.push({
+      label: meta.label,
+      data: vals,
+      borderColor: meta.color,
+      backgroundColor: meta.color + '18',
+      pointBackgroundColor: meta.color,
+      pointRadius: dates.length > 45 ? 2 : 3,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+      tension: 0.3,
+      fill: !dual,
+      yAxisID: axisId
+    });
+    if (showTrend) {
+      datasets.push({
+        label: meta.label + ' · 7天均線',
+        data: _movingAvg(vals, 7),
+        borderColor: meta.color,
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.3,
+        fill: false,
+        yAxisID: axisId
+      });
+    }
+    scales[axisId] = {
+      position: side,
+      reverse: metric === 'avgPositions',
+      ticks: { color: meta.color, font: { size: 10 } },
+      grid:  { color: side === 'right' ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,.06)' },
+      title: { display: true, text: meta.label, color: meta.color, font: { size: 10 } }
+    };
+  }
+
+  addMetric(m1, 'y', 'left');
+  if (dual) addMetric(m2, 'y2', 'right');
 
   siteChartObj = new Chart(canvas, {
     type: 'line',
-    data: {
-      labels: dates,
-      datasets: [{
-        label: meta.label,
-        data: values,
-        borderColor: meta.color,
-        backgroundColor: meta.color + '18',
-        pointBackgroundColor: meta.color,
-        pointRadius: dates.length > 45 ? 2 : 4,
-        pointHoverRadius: 6,
-        borderWidth: 2,
-        tension: 0.3,
-        fill: true,
-      }]
-    },
+    data: { labels: dates, datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { display: false },
+        legend: {
+          display: true,
+          labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 16, padding: 10 }
+        },
         tooltip: {
           backgroundColor: '#12121e', borderColor: '#2a2a45', borderWidth: 1,
           titleColor: '#e2e8f0', bodyColor: '#94a3b8',
           callbacks: {
             label: function(ctx) {
-              var v = ctx.raw;
-              if (v === null || v === undefined) return '無資料';
-              if (isRankMetric) return meta.label + '：#' + parseFloat(v).toFixed(1) + meta.unit;
-              if (metric === 'ctrs') return meta.label + '：' + parseFloat(v).toFixed(2) + meta.unit;
-              return meta.label + '：' + parseInt(v).toLocaleString() + meta.unit;
+              var v = ctx.raw, lbl = ctx.dataset.label || '';
+              if (v === null || v === undefined) return lbl + '：無資料';
+              if (lbl.indexOf('平均排名') === 0) return lbl + '：#' + parseFloat(v).toFixed(1);
+              if (lbl.indexOf('CTR') === 0) return lbl + '：' + parseFloat(v).toFixed(2) + '%';
+              return lbl + '：' + parseFloat(v).toLocaleString();
             }
           }
         }
       },
-      scales: {
-        x: {
-          ticks: {
-            color: '#64748b',
-            maxTicksLimit: _ticksLimit(),
-            font: { size: 10 },
-            callback: function(val) {
-              var label = this.getLabelForValue ? this.getLabelForValue(val) : String(val);
-              var d = _normDate(label);
-              return d ? d.slice(5) : label; // "MM-DD"
-            }
-          },
-          grid:  { color: 'rgba(255,255,255,.04)' }
-        },
-        y: {
-          reverse: isRankMetric,
-          ticks: { color: '#64748b', font: { size: 10 } },
-          grid:  { color: 'rgba(255,255,255,.06)' },
-          title: { display: true, text: meta.label, color: '#64748b', font: { size: 10 } }
-        }
-      }
+      scales: scales
     }
   });
+
   var note = document.getElementById('siteChartNote');
   if (note && dates.length) {
-    note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）';
+    note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）'
+      + (showTrend ? ' · 虛線＝7 天移動平均趨勢線' : '');
   }
 }
 </script>
