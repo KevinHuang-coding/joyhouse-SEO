@@ -2118,4 +2118,17 @@ function redrawSiteChart() {
         y: {
           reverse: isRankMetric,
           ticks: { color: '#64748b', font: { size: 10 } },
-          grid:  { color: '
+          grid:  { color: 'rgba(255,255,255,.06)' },
+          title: { display: true, text: meta.label, color: '#64748b', font: { size: 10 } }
+        }
+      }
+    }
+  });
+  var note = document.getElementById('siteChartNote');
+  if (note && dates.length) {
+    note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）';
+  }
+}
+</script>
+</body>
+</html>
