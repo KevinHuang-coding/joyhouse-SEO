@@ -929,6 +929,41 @@ body {
     <div class="chart-note" id="siteChartNote"></div>
   </div>
 
+  <!-- 圖片搜尋趨勢折線圖（軍師 2026-06-04 加：圖片搜尋是滿屋隱藏金礦，高曝光低排名）-->
+  <div class="chart-card">
+    <div class="chart-card-title">📸 GSC 圖片搜尋趨勢 <span style="font-size:11px;color:var(--text2);font-weight:400">（視覺型作品的曝光戰場）</span></div>
+    <div class="trend-controls" style="margin:8px 0 12px">
+      <span class="trend-label">時間範圍</span>
+      <button class="trend-range-btn" onclick="setImageTrendDays(7)"  id="ibtn7">7 天</button>
+      <button class="trend-range-btn active" onclick="setImageTrendDays(30)" id="ibtn30">30 天</button>
+      <button class="trend-range-btn" onclick="setImageTrendDays(90)" id="ibtn90">90 天</button>
+      <div class="trend-sep"></div>
+      <span class="trend-label">指標 1</span>
+      <select class="trend-metric-select" id="imgMetricSel" onchange="redrawImageChart()">
+        <option value="clicks">點擊數</option>
+        <option value="impressions">曝光數</option>
+        <option value="ctrs">CTR (%)</option>
+        <option value="avgPositions">平均排名</option>
+      </select>
+      <span class="trend-label">指標 2</span>
+      <select class="trend-metric-select" id="imgMetricSel2" onchange="redrawImageChart()">
+        <option value="">無</option>
+        <option value="clicks">點擊數</option>
+        <option value="impressions" selected>曝光數</option>
+        <option value="ctrs">CTR (%)</option>
+        <option value="avgPositions">平均排名</option>
+      </select>
+      <div class="trend-sep"></div>
+      <label class="trend-label" style="cursor:pointer;user-select:none">
+        <input type="checkbox" id="imgTrendlineChk" onchange="redrawImageChart()" style="vertical-align:middle;margin-right:3px">7 天趨勢線
+      </label>
+    </div>
+    <div class="chart-canvas-wrap" id="imageChartWrap">
+      <div class="empty"><div class="e-icon">⏳</div><p>載入圖片搜尋指標中…</p></div>
+    </div>
+    <div class="chart-note" id="imageChartNote"></div>
+  </div>
+
   <!-- 2.8 [v4.0 NEW] GA4 流量分析面板 -->
   <div class="sec-hd" style="margin-top:18px">
     📈 GA4 流量分析（近 90 天）
@@ -1725,6 +1760,9 @@ var selectedKws = [];   // 已選關鍵字（最多 5 個）
 var kwChartObj  = null; // Chart.js instance（關鍵字圖）
 var siteChartObj= null; // Chart.js instance（全站圖）
 var siteTrendDays = 30; // 全站圖獨立時間範圍（軍師 2026-05-21 加）
+var IMAGE_TREND   = null; // getImageSearchTrend() 回傳資料（軍師 2026-06-04 加）
+var imageTrendDays= 30;  // 圖片搜尋圖獨立時間範圍
+var imageChartObj = null; // Chart.js instance（圖片搜尋圖）
 
 /* 調色盤（最多 5 個關鍵字） */
 var KW_COLORS = ['#7c5cfc','#06b6d4','#f59e0b','#ec4899','#22c55e'];
@@ -1765,6 +1803,14 @@ function loadTrendData() {
       redrawSiteChart();
     })
     .catch(function(e){ console.warn('全站趨勢載入失敗:', e.message); });
+
+  fetch(GAS_URL + '?action=getImageSearchTrend&days=' + imageTrendDays)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      IMAGE_TREND = d;
+      redrawImageChart();
+    })
+    .catch(function(e){ console.warn('圖片搜尋趨勢載入失敗:', e.message); });
 }
 
 /* ── 重新整理 ── */
@@ -1774,8 +1820,11 @@ function refreshTrendData() {
   TREND = null; SITE_TREND = null;
   setHtml('kwChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>重新載入中…</p></div>');
   setHtml('siteChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>重新載入中…</p></div>');
-  if (kwChartObj)   { kwChartObj.destroy();   kwChartObj   = null; }
-  if (siteChartObj) { siteChartObj.destroy(); siteChartObj = null; }
+  if (kwChartObj)    { kwChartObj.destroy();    kwChartObj    = null; }
+  if (siteChartObj)  { siteChartObj.destroy();  siteChartObj  = null; }
+  if (imageChartObj) { imageChartObj.destroy(); imageChartObj = null; }
+  IMAGE_TREND = null;
+  setHtml('imageChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>重新載入中…</p></div>');
   loadTrendData();
   setTimeout(function(){ btn.disabled = false; btn.textContent = '🔄 重新整理'; }, 4000);
 }
@@ -2210,6 +2259,154 @@ function redrawSiteChart() {
   if (note && dates.length) {
     note.textContent = '全站合計 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）'
       + (showTrend ? ' · 虛線＝7 天移動平均趨勢線' : '');
+  }
+}
+
+/* ── 圖片搜尋趨勢折線圖（軍師 2026-06-04 加，沿用全站圖雙指標邏輯）── */
+function setImageTrendDays(days) {
+  imageTrendDays = days;
+  ['7','30','90'].forEach(function(d){
+    var el = document.getElementById('ibtn' + d);
+    if (el) el.classList.toggle('active', String(days) === d);
+  });
+  if (imageChartObj) { imageChartObj.destroy(); imageChartObj = null; }
+  setHtml('imageChartWrap', '<div class="empty"><div class="e-icon">⏳</div><p>載入中…</p></div>');
+  fetch(GAS_URL + '?action=getImageSearchTrend&days=' + imageTrendDays)
+    .then(function(r){ return r.json(); })
+    .then(function(d){ IMAGE_TREND = d; redrawImageChart(); })
+    .catch(function(e){
+      setHtml('imageChartWrap', '<div style="padding:20px;color:var(--text2);font-size:12px">⚠️ 圖片搜尋指標載入失敗：' + esc(e.message) + '</div>');
+    });
+}
+
+function redrawImageChart() {
+  var wrap = document.getElementById('imageChartWrap');
+  if (!wrap) return;
+
+  if (!IMAGE_TREND || !IMAGE_TREND.dates || !IMAGE_TREND.dates.length) {
+    var errMsg = (IMAGE_TREND && IMAGE_TREND.error) ? IMAGE_TREND.error : '';
+    var hint = errMsg
+      ? '<br><small style="color:#f59e0b">⚠️ GSC 抓取未就緒：' + esc(errMsg.slice(0,80)) + '<br>請完成 Service Account（GCP）設定後即會自動補滿歷史</small>'
+      : '<br><small>圖片搜尋尚無資料</small>';
+    setHtml('imageChartWrap', '<div class="empty"><div class="e-icon">📸</div><p>圖片搜尋趨勢' + hint + '</p></div>');
+    var n0 = document.getElementById('imageChartNote'); if (n0) n0.textContent = '';
+    return;
+  }
+
+  var metaMap = {
+    clicks:      { label: '點擊數',   color: '#22c55e', unit: '' },
+    impressions: { label: '曝光數',   color: '#06b6d4', unit: '' },
+    ctrs:        { label: 'CTR (%)',  color: '#f59e0b', unit: '%' },
+    avgPositions:{ label: '平均排名', color: '#ec4899', unit: ' 名' }
+  };
+  var m1 = document.getElementById('imgMetricSel')  ? document.getElementById('imgMetricSel').value  : 'clicks';
+  var m2 = document.getElementById('imgMetricSel2') ? document.getElementById('imgMetricSel2').value : '';
+  if (!metaMap[m1]) m1 = 'clicks';
+  if (m2 === m1) m2 = '';
+  var dual = !!metaMap[m2];
+  var showTrend = !!(document.getElementById('imgTrendlineChk') && document.getElementById('imgTrendlineChk').checked);
+
+  var dates = (IMAGE_TREND.dates || []).map(_normDate).filter(Boolean);
+
+  if (imageChartObj) { imageChartObj.destroy(); imageChartObj = null; }
+  wrap.innerHTML = '<canvas id="imageChartCanvas"></canvas>';
+  var canvas = document.getElementById('imageChartCanvas');
+  if (!canvas) return;
+
+  var imgTicks = imageTrendDays <= 7 ? 7 : imageTrendDays <= 30 ? 10 : 12;
+  var datasets = [];
+  var scales = {
+    x: {
+      ticks: {
+        color: '#64748b', maxTicksLimit: imgTicks, font: { size: 10 },
+        callback: function(val) {
+          var label = this.getLabelForValue ? this.getLabelForValue(val) : String(val);
+          var dd = _normDate(label);
+          return dd ? dd.slice(5) : label;
+        }
+      },
+      grid: { color: 'rgba(255,255,255,.04)' }
+    }
+  };
+
+  function addMetric(metric, axisId, side) {
+    var meta = metaMap[metric];
+    var vals = IMAGE_TREND[metric] || [];
+    datasets.push({
+      label: meta.label,
+      data: vals,
+      borderColor: meta.color,
+      backgroundColor: meta.color + '18',
+      pointBackgroundColor: meta.color,
+      pointRadius: dates.length > 45 ? 2 : 3,
+      pointHoverRadius: 6,
+      borderWidth: 2,
+      tension: 0.3,
+      fill: !dual,
+      yAxisID: axisId
+    });
+    if (showTrend) {
+      datasets.push({
+        label: meta.label + ' · 7天均線',
+        data: _movingAvg(vals, 7),
+        borderColor: meta.color,
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: 0.3,
+        fill: false,
+        yAxisID: axisId
+      });
+    }
+    scales[axisId] = {
+      position: side,
+      reverse: metric === 'avgPositions',
+      ticks: { color: meta.color, font: { size: 10 } },
+      grid:  { color: side === 'right' ? 'rgba(0,0,0,0)' : 'rgba(255,255,255,.06)' },
+      title: { display: true, text: meta.label, color: meta.color, font: { size: 10 } }
+    };
+  }
+
+  addMetric(m1, 'y', 'left');
+  if (dual) addMetric(m2, 'y2', 'right');
+
+  imageChartObj = new Chart(canvas, {
+    type: 'line',
+    data: { labels: dates, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 16, padding: 10 }
+        },
+        tooltip: {
+          backgroundColor: '#12121e', borderColor: '#2a2a45', borderWidth: 1,
+          titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.raw, lbl = ctx.dataset.label || '';
+              if (v === null || v === undefined) return lbl + '：無資料';
+              if (lbl.indexOf('平均排名') === 0) return lbl + '：#' + parseFloat(v).toFixed(1);
+              if (lbl.indexOf('CTR') === 0) return lbl + '：' + parseFloat(v).toFixed(2) + '%';
+              return lbl + '：' + parseFloat(v).toLocaleString();
+            }
+          }
+        }
+      },
+      scales: scales
+    }
+  });
+
+  var note = document.getElementById('imageChartNote');
+  if (note && dates.length) {
+    var totalClicks = (IMAGE_TREND.clicks || []).reduce(function(a,b){ return a + (b||0); }, 0);
+    var totalImpr   = (IMAGE_TREND.impressions || []).reduce(function(a,b){ return a + (b||0); }, 0);
+    note.textContent = '圖片搜尋 · ' + dates[0] + ' ~ ' + dates[dates.length - 1] + '（' + dates.length + ' 天）'
+      + ' · 合計點擊 ' + totalClicks.toLocaleString() + '／曝光 ' + totalImpr.toLocaleString()
+      + (showTrend ? ' · 虛線＝7 天移動平均' : '');
   }
 }
 </script>
