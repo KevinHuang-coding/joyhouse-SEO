@@ -1411,41 +1411,35 @@ function renderSingleScan(res){
   var p = res.page;
   var sc = p['綜合分數']||0;
   var scColor = sc>=80?'var(--green)':sc>=40?'var(--yellow)':'var(--red)';
-  var dims = [
-    ['Title', p['Title狀態'], (p['Title字數']||0)+'字'],
-    ['Meta', p['Meta狀態'], (p['Meta字數']||0)+'字'],
-    ['H1', p['H1狀態'], p['H1']?'有':'缺'],
-    ['圖片Alt', p['Alt狀態'], (p['Alt覆蓋率']||0)+'%'],
-    ['Schema', p['Schema狀態'], p['Schema類型']||'無'],
-    ['URL', p['URL狀態'], p['URL含中文']==='是'?'含中文':(p['URL長度']||0)+'字'],
-    ['中文字數', p['內容狀態'], (p['字數(中文字)']||0)+'字']
-  ];
   var h = '';
-  h += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">';
+  h += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">';
   h +=   '<div style="font-size:38px;font-weight:800;line-height:1;color:'+scColor+'">'+sc+'<span style="font-size:14px;color:var(--text3)">/100</span></div>';
   h +=   '<div style="font-size:11px;color:var(--text3);word-break:break-all">'+_esc(p['URL'])+'<br>類型：'+_esc(p['頁面類型']||'-')+'　掃描：'+_esc(p['掃描時間']||res.scannedAt||'')+'</div>';
   h += '</div>';
-  h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px">';
-  dims.forEach(function(d){
-    h += '<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px">'
-       + _lamp(d[1])+' <b>'+d[0]+'</b> <span style="color:var(--text3)">'+d[2]+'</span></div>';
-  });
-  h += '</div>';
 
-  // 📋 掃描明細：列出實際抓到的內容（H1/Title/Meta 全文等），讓主公直接看到文字敘述
-  h += '<div style="font-size:12px;font-weight:700;color:var(--text3);margin:4px 0 6px">📋 掃描明細</div>';
-  h += '<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 12px;margin-bottom:12px">';
-  h += _detailRow('Title', p['Title']);
-  h += _detailRow('Meta 描述', p['Meta描述']);
-  h += _detailRow('H1', p['H1']);
-  h += _detailRow('H2 數量', String(p['H2數量']==null?0:p['H2數量']));
+  // 每個維度＝一張全寬卡片：上排燈號+標籤+指標，下排「實際抓到的內容」（一眼可見、不必往下捲）
+  var cards = [
+    ['Title',     p['Title狀態'], (p['Title字數']||0)+' 字',                              p['Title']],
+    ['Meta 描述', p['Meta狀態'],  (p['Meta字數']||0)+' 字',                               p['Meta描述']],
+    ['H1',        p['H1狀態'],    (p['H1']?'有':'缺'),                                     p['H1']],
+    ['圖片 Alt',  p['Alt狀態'],   '覆蓋率 '+(p['Alt覆蓋率']||0)+'%',                        '共 '+(p['圖片總數']||0)+' 張圖，缺 Alt '+(p['缺Alt圖片']||0)+' 張'],
+    ['Schema',    p['Schema狀態'],(p['Schema狀態']==='ok'?'有':'缺'),                       (p['Schema類型']||'')+(p['Schema重複']?'　⚠️ 重複：'+p['Schema重複']:'')],
+    ['URL',       p['URL狀態'],   (p['URL長度']||0)+' 字'+(p['URL含中文']==='是'?'・含中文':''), p['URL']],
+    ['內文字數',  p['內容狀態'],  (p['字數(中文字)']||0)+' 中文字',                          '內文共 '+(p['字數(中文字)']||0)+' 個中文字'+(parseInt(p['H2數量']||0)?'，H2 小標 '+p['H2數量']+' 個':'')]
+  ];
+  cards.forEach(function(c){
+    var content = (c[3]==null||c[3]==='') ? '<span style="color:var(--text3)">—（無）</span>' : _esc(c[3]);
+    h += '<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:7px">'
+       + '<div style="font-size:12px;margin-bottom:4px">'+_lamp(c[1])+' <b>'+_esc(c[0])+'</b> <span style="color:var(--text3)">· '+_esc(c[2])+'</span></div>'
+       + '<div style="font-size:13px;color:var(--text);word-break:break-word;line-height:1.55">'+content+'</div>'
+       + '</div>';
+  });
+
+  // 補充訊號：OG 社群分享標籤（無對應分數維度，獨立列出實際內容）
+  h += '<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 12px;margin:5px 0 12px">';
   h += _detailRow('og:title', p['og:title']);
   h += _detailRow('og:desc', p['og:description']);
   h += _detailRow('OG 圖片', p['OG-IMG']==='Y'?'有':'無');
-  h += _detailRow('Schema', (p['Schema類型']||'無') + (p['Schema重複']?'（重複：'+p['Schema重複']+'）':''));
-  h += _detailRow('圖片', '總數 '+(p['圖片總數']||0)+'｜缺 Alt '+(p['缺Alt圖片']||0)+'｜覆蓋率 '+(p['Alt覆蓋率']||0)+'%');
-  h += _detailRow('URL', '路徑 '+(p['URL長度']||0)+' 字｜含中文 '+(p['URL含中文']||'否'));
-  h += _detailRow('內文字數', (p['字數(中文字)']||0)+' 中文字');
   h += '</div>';
 
   var issues = String(p['問題摘要']||'').split('、').filter(Boolean);
