@@ -1069,23 +1069,47 @@ function loadData() {
     .catch(function(e){ onErr({message: e.message}); });
 }
 
+// [修復 2026-06-23] 全站掃描改背景分批：啟動後立即回，輪詢進度，掃完自動刷新（不再因等全站而 Failed to fetch）
 function startScan() {
   var btn = document.getElementById('scanBtn');
   btn.disabled = true;
   btn.textContent = '⏳ 掃描中…';
-  ovShow('🔄 全站掃描中', '逐頁掃描 75 個頁面，約需 2–3 分鐘，請耐心等候…');
+  ovShow('🔄 啟動全站掃描', '背景分批掃描全站（避開逾時），啟動中…');
   fetch(GAS_URL + '?action=scan')
     .then(function(r){ return r.json(); })
     .then(function(d){
-      onData(d);
-      toast('✅ 掃描完成！所有指標已更新');
+      ovHide();
+      toast((d && d.message) ? d.message : '🔄 掃描已開始，背景進行中…');
+      _pollScan();
     })
     .catch(function(e){
       ovHide();
       btn.disabled = false;
       btn.textContent = '🔄 立即掃描';
-      toast('❌ 掃描失敗：' + e.message);
+      toast('❌ 掃描啟動失敗：' + e.message);
     });
+}
+
+var _scanPollTimer = null;
+function _pollScan() {
+  var btn = document.getElementById('scanBtn');
+  if (_scanPollTimer) clearInterval(_scanPollTimer);
+  _scanPollTimer = setInterval(function(){
+    fetch(GAS_URL + '?action=scan_status&_=' + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(s){
+        if (s && s.running) {
+          btn.textContent = '⏳ 掃描中 ' + (s.pct || 0) + '%';
+        } else {
+          clearInterval(_scanPollTimer); _scanPollTimer = null;
+          btn.disabled = false;
+          btn.textContent = '🔄 立即掃描';
+          toast('✅ 全站掃描完成，資料已更新');
+          loadData();
+        }
+      })
+      .catch(function(){ /* 單次輪詢失敗忽略，下次再試 */ });
+  }, 20000);
 }
 
 /* ── Data handler ── */
