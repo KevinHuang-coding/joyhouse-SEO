@@ -1395,6 +1395,13 @@ function runSingleScan(){
       box.innerHTML = '<span style="color:var(--red)">健檢失敗：'+(e&&e.message?e.message:e)+'</span>';
     });
 }
+function _esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _detailRow(label, val){
+  var v = (val==null || val==='') ? '<span style="color:var(--text3)">—（無）</span>' : _esc(val);
+  return '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">'
+       + '<span style="color:var(--text3);min-width:78px;flex-shrink:0">'+label+'</span>'
+       + '<span style="color:var(--text);word-break:break-word">'+v+'</span></div>';
+}
 function renderSingleScan(res){
   var box = document.getElementById('singleScanResult');
   if(!res || !res.ok){
@@ -1416,7 +1423,7 @@ function renderSingleScan(res){
   var h = '';
   h += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">';
   h +=   '<div style="font-size:38px;font-weight:800;line-height:1;color:'+scColor+'">'+sc+'<span style="font-size:14px;color:var(--text3)">/100</span></div>';
-  h +=   '<div style="font-size:11px;color:var(--text3);word-break:break-all">'+p['URL']+'<br>類型：'+(p['頁面類型']||'-')+'　掃描：'+(p['掃描時間']||res.scannedAt||'')+'</div>';
+  h +=   '<div style="font-size:11px;color:var(--text3);word-break:break-all">'+_esc(p['URL'])+'<br>類型：'+_esc(p['頁面類型']||'-')+'　掃描：'+_esc(p['掃描時間']||res.scannedAt||'')+'</div>';
   h += '</div>';
   h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px">';
   dims.forEach(function(d){
@@ -1424,6 +1431,23 @@ function renderSingleScan(res){
        + _lamp(d[1])+' <b>'+d[0]+'</b> <span style="color:var(--text3)">'+d[2]+'</span></div>';
   });
   h += '</div>';
+
+  // 📋 掃描明細：列出實際抓到的內容（H1/Title/Meta 全文等），讓主公直接看到文字敘述
+  h += '<div style="font-size:12px;font-weight:700;color:var(--text3);margin:4px 0 6px">📋 掃描明細</div>';
+  h += '<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 12px;margin-bottom:12px">';
+  h += _detailRow('Title', p['Title']);
+  h += _detailRow('Meta 描述', p['Meta描述']);
+  h += _detailRow('H1', p['H1']);
+  h += _detailRow('H2 數量', String(p['H2數量']==null?0:p['H2數量']));
+  h += _detailRow('og:title', p['og:title']);
+  h += _detailRow('og:desc', p['og:description']);
+  h += _detailRow('OG 圖片', p['OG-IMG']==='Y'?'有':'無');
+  h += _detailRow('Schema', (p['Schema類型']||'無') + (p['Schema重複']?'（重複：'+p['Schema重複']+'）':''));
+  h += _detailRow('圖片', '總數 '+(p['圖片總數']||0)+'｜缺 Alt '+(p['缺Alt圖片']||0)+'｜覆蓋率 '+(p['Alt覆蓋率']||0)+'%');
+  h += _detailRow('URL', '路徑 '+(p['URL長度']||0)+' 字｜含中文 '+(p['URL含中文']||'否'));
+  h += _detailRow('內文字數', (p['字數(中文字)']||0)+' 中文字');
+  h += '</div>';
+
   var issues = String(p['問題摘要']||'').split('、').filter(Boolean);
   if(!issues.length){
     h += '<div style="color:var(--green);font-weight:700">✅ 7 維度全數達標，這頁 SEO 很到位！</div>';
